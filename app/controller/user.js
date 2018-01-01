@@ -3,14 +3,23 @@
 const Controller = require('egg').Controller
 
 class UserController extends Controller {
+  /**
+   * default router
+   */
   async index() {
-    this.ctx.body = 'hi, egg'
+    this.ctx.body = 'This is user api for HTeam.'
   }
 
+  /**
+   * login
+   * @param {string} username 用户名
+   * @param {string} password 密码
+   * @description return {code:0, message:'', user:user}
+   */
   async login() {
-    const username = this.ctx.request.body.username
-    const password = this.ctx.request.body.password
-    const result = this.service.user.login(username)
+    const username = this.ctx.query.username
+    const password = this.ctx.query.password
+    const result = await this.service.user.login({ username })
 
     const response = { code: 0, message: '' }
     if (result) {
