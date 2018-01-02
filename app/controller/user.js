@@ -1,6 +1,6 @@
 'use strict'
 
-const Controller = require('egg').Controller
+const Controller = require('../base/base_controller')
 
 class UserController extends Controller {
   /**
@@ -21,21 +21,27 @@ class UserController extends Controller {
     const password = this.ctx.query.password
     const result = await this.service.user.login({ username })
 
-    const response = { code: 0, message: '' }
     if (result) {
       if (password === result.password) {
-        response.message = '登录成功'
-        response.user = result
+        this.success(result)
       } else {
-        response.code = 1
-        response.message = '用户名或密码错误'
+        this.error(-1, '用户名或密码错误')
       }
     } else {
-      response.code = 1
-      response.message = '用户名或密码错误'
+      this.error(-1, '用户名或密码错误')
     }
-    this.ctx.body = response
     this.ctx.status = 200
+  }
+
+  async create() {
+    const user = this.ctx.request.body
+    const result = await this.service.user.create(user)
+    const success = this.checkResult(result)
+    if (success) {
+      this.success({ id: result.insertId })
+    } else {
+      this.error(-1, '创建用户失败')
+    }
   }
 }
 
