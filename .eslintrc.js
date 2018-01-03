@@ -14,6 +14,8 @@ module.exports = {
     // allow async-await
     'generator-star-spacing': 'off',
     // turn off spacing before function parenthesis
-    'space-before-function-paren': 0
+    'space-before-function-paren': 0,
+    // turn off spaces inside of brackets
+    'array-bracket-spacing': 0
   }
 }

@@ -5,3 +5,8 @@ exports.mysql = {
   enable: true,
   package: 'egg-mysql',
 }
+// use egg cors plugin
+exports.cors = {
+  enable: true,
+  package: 'egg-cors',
+}

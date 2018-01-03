@@ -1,5 +1,4 @@
-import { error } from 'util'
-;('use strict')
+'use strict'
 
 const Controller = require('egg').Controller
 

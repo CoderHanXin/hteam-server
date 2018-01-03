@@ -17,8 +17,8 @@ class UserController extends Controller {
    * @description return {code:0, message:'', user:user}
    */
   async login() {
-    const username = this.ctx.query.username
-    const password = this.ctx.query.password
+    const username = this.ctx.request.body.username
+    const password = this.ctx.request.body.password
     const result = await this.service.user.login({ username })
 
     if (result) {
