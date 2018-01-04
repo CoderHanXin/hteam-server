@@ -8,4 +8,5 @@ module.exports = app => {
   router.get('/', controller.home.index)
   router.post('/api/user/login', controller.user.login)
   router.post('/api/user/create', controller.user.create)
+  router.post('/api/user/delete', controller.user.delete)
 }
