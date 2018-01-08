@@ -9,4 +9,5 @@ module.exports = app => {
   router.post('/api/user/login', controller.user.login)
   router.post('/api/user/create', controller.user.create)
   router.post('/api/user/delete', controller.user.delete)
+  router.post('/api/user/edit', controller.user.edit)
 }
