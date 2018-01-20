@@ -10,12 +10,15 @@ module.exports = appInfo => {
   config.middleware = []
 
   config.security = {
-    csrf: { ignoreJSON: true },
-    domainWhiteList: ['http://localhost:8080'],
+    csrf: {
+      ignore: '/api',
+      ignoreJSON: false,
+    },
+    domainWhiteList: ['http://localhost:9001'],
   }
 
   config.cors = {
-    allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS',
+    allowMethods: 'HEAD,OPTIONS,GET,POST,PUT,DELETE',
     allowHeaders: 'content-type',
     credentials: true,
   }

@@ -1,6 +1,7 @@
 'use strict'
 
 const Controller = require('../base/base_controller')
+const ERROR = require('../common/error')
 
 class UserController extends Controller {
   /**
@@ -25,10 +26,10 @@ class UserController extends Controller {
       if (password === result.password) {
         this.success(result)
       } else {
-        this.error(-1, '用户名或密码错误')
+        this.error(ERROR.MSG_USER_LOGIN_FAILED)
       }
     } else {
-      this.error(-1, '用户名或密码错误')
+      this.error(ERROR.MSG_USER_LOGIN_FAILED)
     }
     this.ctx.status = 200
   }
@@ -36,11 +37,33 @@ class UserController extends Controller {
   async create() {
     const user = this.ctx.request.body
     const result = await this.service.user.create(user)
-    const success = this.checkResult(result)
+    const success = this.checkResult('create', result)
     if (success) {
       this.success({ id: result.insertId })
     } else {
-      this.error(-1, '创建用户失败')
+      this.error(ERROR.MSG_USER_CREATE_ERROR)
+    }
+  }
+
+  async delete() {
+    const id = this.ctx.query.id
+    const result = await this.service.user.delete(id)
+    const success = this.checkResult('delete', result)
+    if (success) {
+      this.success()
+    } else {
+      this.error(ERROR.MSG_USER_DELETE_ERROR)
+    }
+  }
+
+  async update() {
+    const user = this.ctx.request.body
+    const result = await this.service.user.update(user)
+    const success = this.checkResult('update', result)
+    if (success) {
+      this.success({ id: result.insertId })
+    } else {
+      this.error(ERROR.MSG_USER_UPDATE_ERROR)
     }
   }
 }

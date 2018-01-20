@@ -17,7 +17,7 @@ class UserService extends Service {
     return result
   }
 
-  async edit(user) {
+  async update(user) {
     const result = this.app.mysql.update('user', user)
     return result
   }

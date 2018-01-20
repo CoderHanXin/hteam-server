@@ -9,5 +9,5 @@ module.exports = app => {
   router.post('/api/user/login', controller.user.login)
   router.post('/api/user/create', controller.user.create)
   router.del('/api/user/delete', controller.user.delete)
-  router.put('/api/user/edit', controller.user.edit)
+  router.put('/api/user/update', controller.user.update)
 }
