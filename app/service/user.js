@@ -18,7 +18,29 @@ class UserService extends Service {
   }
 
   async update(user) {
+    user.updateTime = this.app.mysql.literals.now
     const result = this.app.mysql.update('user', user)
+    return result
+  }
+
+  async search(orgId, name) {
+    const wheres = []
+    const values = []
+    if (orgId) {
+      wheres.push('orgId = ?')
+      values.push(orgId)
+    }
+    if (name) {
+      wheres.push('name like ?')
+      values.push('%' + name + '%')
+    }
+
+    let _where = ''
+    if (wheres.length > 0) {
+      _where = ' where ' + wheres.join(' and ')
+    }
+    const _sql = 'select id, username, name, phone, empNumber, orgId from user' + _where
+    const result = this.app.mysql.query(_sql, values)
     return result
   }
 }
