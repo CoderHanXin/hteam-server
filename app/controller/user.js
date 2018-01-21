@@ -66,6 +66,13 @@ class UserController extends Controller {
       this.error(ERROR.MSG_USER_UPDATE_ERROR)
     }
   }
+
+  async search() {
+    const orgId = this.ctx.query.orgId
+    const name = this.ctx.query.name
+    const result = await this.service.user.search(orgId, name)
+    this.success(result)
+  }
 }
 
 module.exports = UserController
