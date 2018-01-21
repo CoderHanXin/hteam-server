@@ -10,4 +10,5 @@ module.exports = app => {
   router.post('/api/user/create', controller.user.create)
   router.del('/api/user/delete', controller.user.delete)
   router.put('/api/user/update', controller.user.update)
+  router.get('/api/user/search', controller.user.search)
 }
