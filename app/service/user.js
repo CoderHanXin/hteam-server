@@ -23,7 +23,7 @@ class UserService extends Service {
     return result
   }
 
-  async search(orgId, name) {
+  async search(orgId, name, status) {
     const wheres = []
     const values = []
     if (orgId) {
@@ -33,6 +33,10 @@ class UserService extends Service {
     if (name) {
       wheres.push('name like ?')
       values.push('%' + name + '%')
+    }
+    if (status) {
+      wheres.push('status = ?')
+      values.push(status)
     }
 
     let _where = ''
