@@ -10,7 +10,8 @@ module.exports = {
     // allow strict mode
     strict: [0, 'global'],
     // require trailing commas when multiline
-    'comma-dangle': ['error', 'always-multiline'],
+    // 'comma-dangle': ['error', 'always-multiline'],
+    'comma-dangle': 0,
     // allow async-await
     'generator-star-spacing': 'off',
     // turn off spacing before function parenthesis
