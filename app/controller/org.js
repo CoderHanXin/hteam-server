@@ -13,8 +13,12 @@ class OrgController extends Controller {
 
   async tree() {
     const id = this.ctx.query.id
-    const result = await this.service.org.findTree(id)
-    this.success(result)
+    if (id) {
+      const result = await this.service.org.findTree(id)
+      this.success(result)
+    } else {
+      this.ctx.status = 400
+    }
   }
 }
 
