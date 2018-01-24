@@ -2,24 +2,24 @@ const Service = require('egg').Service
 class UserService extends Service {
   async login(request) {
     const condition = { username: request.username }
-    const result = this.app.mysql.get('user', condition)
+    const result = await this.app.mysql.get('user', condition)
     return result
   }
 
   async create(user) {
     user.createTime = this.app.mysql.literals.now
-    const result = this.app.mysql.insert('user', user)
+    const result = await this.app.mysql.insert('user', user)
     return result
   }
 
   async delete(userId) {
-    const result = this.app.mysql.delete('user', { id: userId })
+    const result = await this.app.mysql.delete('user', { id: userId })
     return result
   }
 
   async update(user) {
     user.updateTime = this.app.mysql.literals.now
-    const result = this.app.mysql.update('user', user)
+    const result = await this.app.mysql.update('user', user)
     return result
   }
 
@@ -44,7 +44,7 @@ class UserService extends Service {
       _where = ' where ' + wheres.join(' and ')
     }
     const _sql = 'select id, username, name, phone, empNumber, orgId from user' + _where
-    const result = this.app.mysql.query(_sql, values)
+    const result = await this.app.mysql.query(_sql, values)
     return result
   }
 }
