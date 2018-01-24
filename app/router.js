@@ -17,6 +17,7 @@ module.exports = app => {
   router.get('/api/org/tree', controller.org.tree)
 
   router.get('/api/task', controller.task.index)
+  router.get('/api/task/inbox', controller.task.inbox)
   router.post('/api/task/create', controller.task.create)
   router.put('/api/task/update', controller.task.update)
 }

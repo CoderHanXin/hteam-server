@@ -29,6 +29,14 @@ class TaskController extends Controller {
       this.error(ERROR.MSG_USER_UPDATE_ERROR)
     }
   }
+
+  async inbox() {
+    const assignee = this.ctx.query.assignee
+    const type = this.ctx.query.type
+
+    const result = await this.service.task.findByAssignee(assignee, type)
+    this.success(result)
+  }
 }
 
 module.exports = TaskController
