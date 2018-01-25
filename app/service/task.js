@@ -35,7 +35,7 @@ class TaskService extends Service {
       default:
         break
     }
-    _sql += _where
+    _sql += _where + ' order by id desc'
 
     const result = await this.app.mysql.query(_sql, values)
     return result
