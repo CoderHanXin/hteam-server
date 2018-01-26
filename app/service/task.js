@@ -20,23 +20,22 @@ class TaskService extends Service {
     let _sql = 'select * from task '
     let _where = ' where assigneeId = ? '
     values.push(assignee)
-
-    switch (type) {
+    switch (Number(type)) {
       case taskSearch.TASK_SEARCH_ALL:
         break
       case taskSearch.TASK_SEARCH_COMPLETE:
         _where += ' and complete = ? '
-        values.push(true)
+        values.push(taskSearch.TASK_SEARCH_COMPLETE)
         break
       case taskSearch.TASK_SEARCH_UNCOMPLETE:
         _where += ' and complete = ? '
-        values.push(false)
+        values.push(taskSearch.TASK_SEARCH_UNCOMPLETE)
         break
       default:
         break
     }
-    _sql += _where + ' order by id desc'
 
+    _sql += _where + ' order by id desc'
     const result = await this.app.mysql.query(_sql, values)
     return result
   }
