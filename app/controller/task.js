@@ -24,7 +24,7 @@ class TaskController extends Controller {
     const result = await this.service.task.update(task)
     const success = this.checkResult('update', result)
     if (success) {
-      this.success({ id: result.insertId })
+      this.success()
     } else {
       this.error(ERROR.MSG_USER_UPDATE_ERROR)
     }

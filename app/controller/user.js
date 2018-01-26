@@ -31,7 +31,6 @@ class UserController extends Controller {
     } else {
       this.error(ERROR.MSG_USER_LOGIN_FAILED)
     }
-    this.ctx.status = 200
   }
 
   async create() {
@@ -61,7 +60,7 @@ class UserController extends Controller {
     const result = await this.service.user.update(user)
     const success = this.checkResult('update', result)
     if (success) {
-      this.success({ id: result.insertId })
+      this.success()
     } else {
       this.error(ERROR.MSG_USER_UPDATE_ERROR)
     }
