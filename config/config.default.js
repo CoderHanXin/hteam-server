@@ -4,23 +4,25 @@ module.exports = appInfo => {
   const config = (exports = {})
 
   // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '_1514796185563_8404'
+  config.keys = appInfo.name + 'this_is_cookie_secret_key'
 
-  // add your config here
+  // 密码加密的key
+  config.md5Key = 'this_is_password_secret_key'
+
   config.middleware = []
 
   config.security = {
     csrf: {
       ignore: '/api',
-      ignoreJSON: false,
+      ignoreJSON: false
     },
-    domainWhiteList: ['http://localhost:9001'],
+    domainWhiteList: ['http://localhost:9001']
   }
 
   config.cors = {
     allowMethods: 'HEAD,OPTIONS,GET,POST,PUT,DELETE',
     allowHeaders: 'content-type',
-    credentials: true,
+    credentials: true
   }
 
   return config

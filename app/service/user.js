@@ -1,8 +1,7 @@
 const Service = require('egg').Service
 class UserService extends Service {
-  async login(request) {
-    const condition = { username: request.username }
-    const result = await this.app.mysql.get('user', condition)
+  async findByUsername(username) {
+    const result = await this.app.mysql.get('user', { username })
     return result
   }
 
@@ -43,7 +42,8 @@ class UserService extends Service {
     if (wheres.length > 0) {
       _where = ' where ' + wheres.join(' and ')
     }
-    const _sql = 'select id, username, name, phone, empNumber, orgId from user' + _where
+    const _sql =
+      'select id, username, name, phone, empNumber, orgId from user' + _where
     const result = await this.app.mysql.query(_sql, values)
     return result
   }
