@@ -17,7 +17,6 @@ class UserService extends Service {
   }
 
   async update(user) {
-    user.updateTime = this.app.mysql.literals.now
     const result = await this.app.mysql.update('user', user)
     return result
   }
