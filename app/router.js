@@ -13,6 +13,12 @@ module.exports = app => {
   router.put('/api/user/update', controller.user.update)
   router.get('/api/user/search', controller.user.search)
 
+  router.get('/api/team', controller.team.index)
+  router.get('/api/team/:id', controller.team.show)
+  router.post('/api/team/create', controller.team.create)
+  router.del('/api/team/delete', controller.team.delete)
+  router.put('/api/team/:id', controller.team.update)
+
   router.get('/api/org', controller.org.index)
   router.get('/api/org/tree', controller.org.tree)
 
