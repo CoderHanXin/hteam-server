@@ -5,11 +5,15 @@ const ERROR = require('../common/error')
 const md5 = require('blueimp-md5')
 
 class UserController extends Controller {
-  /**
-   * default router
-   */
   async index() {
-    this.ctx.body = 'This is user api for HTeam.'
+    const params = this.ctx.query
+    let result
+    if (params.teamId) {
+      result = await this.service.user.findByParamsAndTeamId(params)
+    } else {
+      result = await this.service.user.findByParamsAndGroupId(params)
+    }
+    this.success(result)
   }
 
   /**
@@ -34,14 +38,16 @@ class UserController extends Controller {
   }
 
   async create() {
-    const user = this.ctx.request.body
+    const params = this.ctx.request.body
+    console.log(params)
+    const user = params.user
     let result = await this.service.user.findByUsername(user.username)
     if (result) {
       this.error(ERROR.MSG_USER_CREATE_ERROR_USERNAME)
       return
     }
     user.password = md5(user.password, this.config.md5Key)
-    result = await this.service.user.create(user)
+    result = await this.service.user.create(user, params.teamId)
     const success = this.checkResult('create', result)
     if (success) {
       this.success({ id: result.insertId })
@@ -70,14 +76,6 @@ class UserController extends Controller {
     } else {
       this.error(ERROR.MSG_USER_UPDATE_ERROR)
     }
-  }
-
-  async search() {
-    const orgId = this.ctx.query.orgId
-    const name = this.ctx.query.name
-    const status = this.ctx.query.status
-    const result = await this.service.user.search(orgId, name, status)
-    this.success(result)
   }
 }
 
