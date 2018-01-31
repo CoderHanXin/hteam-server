@@ -11,8 +11,8 @@ class GroupController extends Controller {
   }
 
   async create() {
-    const info = this.ctx.request.body
-    const result = await this.service.group.create(info.group)
+    const params = this.ctx.request.body
+    const result = await this.service.group.create(params.group, params.users)
     const success = this.checkResult('create', result)
     if (success) {
       this.success({ id: result.insertId })

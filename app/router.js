@@ -18,6 +18,11 @@ module.exports = app => {
   router.del('/api/team/delete', controller.team.delete)
   router.put('/api/team/:id', controller.team.update)
 
+  router.get('/api/group', controller.group.index)
+  router.post('/api/group', controller.group.create)
+  router.del('/api/group/delete', controller.group.delete)
+  router.put('/api/group/:id', controller.group.update)
+
   router.get('/api/org', controller.org.index)
   router.get('/api/org/tree', controller.org.tree)
 
