@@ -28,6 +28,7 @@ class UserController extends Controller {
 
     if (result) {
       if (result.password === md5(password, this.config.md5Key)) {
+        delete result.password
         this.success(result)
       } else {
         this.error(ERROR.MSG_USER_LOGIN_FAILED)
@@ -48,9 +49,10 @@ class UserController extends Controller {
     }
     user.password = md5(user.password, this.config.md5Key)
     result = await this.service.user.create(user, params.teamId)
+    console.log(result)
     const success = this.checkResult('create', result)
     if (success) {
-      this.success({ id: result.insertId })
+      this.success({ id: result.id })
     } else {
       this.error(ERROR.MSG_USER_CREATE_ERROR)
     }
