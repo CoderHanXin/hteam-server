@@ -6,12 +6,14 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "egg": "^2.2.1",
+    "egg": "^2.3.0",
     "egg-cors": "^2.0.0",
     "egg-mysql": "^3.0.0",
     "egg-scripts": "^2.5.0",
+    "egg-sequelize": "^3.1.0",
     "egg-validate": "^1.0.0",
-    "blueimp-md5": "^2.10.0"
+    "blueimp-md5": "^2.10.0",
+    "mysql2": "^1.5.1"
   },
   "devDependencies": {
     "autod": "^3.0.1",
@@ -40,7 +42,10 @@
     "cov": "egg-bin cov",
     "lint": "eslint .",
     "ci": "npm run lint && npm run cov",
-    "autod": "autod"
+    "autod": "autod",
+    "migrate:new": "egg-sequelize migration:create",
+    "migrate:up": "egg-sequelize db:migrate",
+    "migrate:down": "egg-sequelize db:migrate:undo"
   },
   "ci": {
     "version": "8"
