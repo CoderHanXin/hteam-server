@@ -2,37 +2,63 @@ const Service = require('egg').Service
 const ROLE = require('../common/role')
 class UserService extends Service {
   async findByUsername(username) {
-    const result = await this.app.mysql.get('user', { username })
+    const result = await this.app.model.User.findOne({
+      where: { username }
+    })
     return result
   }
 
   async create(user, teamId) {
-    const conn = await this.app.mysql.beginTransaction()
-    let result
-    try {
-      user.createTime = this.app.mysql.literals.now
-      result = await this.app.mysql.insert('user', user)
-      const r = {}
-      r.teamId = teamId
-      r.userId = result.insertId
-      r.roleId = ROLE.MEMBER
-      r.roleName = ROLE.MEMBER_TITLE
-      await this.app.mysql.insert('r_team_user', r)
-      await conn.commit()
-    } catch (error) {
-      await conn.rollback()
-      throw error
-    }
-    return result
+    let plain
+    return this.app.model
+      .transaction(t => {
+        return this.app.model.User.create(user, { transaction: t }).then(
+          result => {
+            plain = result.get({ plain: true })
+            return this.app.model.TeamUser.create(
+              {
+                team_id: teamId,
+                user_id: plain.id,
+                role_id: ROLE.MEMBER,
+                role_name: ROLE.MEMBER_TITLE
+              },
+              { transaction: t }
+            )
+          }
+        )
+      })
+      .then(result => {
+        console.log(result)
+        return plain
+      })
+      .catch(error => {
+        console.log(error)
+        throw error
+      })
+    // const result = await this.app.model.User.create(user)
+    // // const team = await this.app.model.Team.findById(teamId)
+    // // await result.addTeam(team, {
+    // //   through: { role_id: ROLE.MEMBER, role_name: ROLE.MEMBER_TITLE }
+    // // })
+    // const plain = result.get({ plain: true })
+    // await this.app.model.TeamUser.create({
+    //   team_id: teamId,
+    //   user_id: plain.id,
+    //   role_id: ROLE.MEMBER,
+    //   role_name: ROLE.MEMBER_TITLE
+    // })
+    // return plain
   }
 
-  async delete(userId) {
-    const result = await this.app.mysql.delete('user', { id: userId })
+  async delete(id) {
+    const result = await this.app.model.User.destroy({
+      where: { id }
+    })
     return result
   }
 
   async update(user) {
-    const result = await this.app.mysql.update('user', user)
+    const result = await this.app.model.User.update(user)
     return result
   }
 
