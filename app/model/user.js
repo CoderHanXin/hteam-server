@@ -53,10 +53,10 @@ module.exports = app => {
       through: app.model.TeamUser
     })
     app.model.User.belongsToMany(app.model.Group, {
-      through: 'r_group_user'
+      through: 'group_user'
     })
     app.model.User.belongsToMany(app.model.Project, {
-      through: 'r_project_user'
+      through: 'project_user'
     })
   }
 

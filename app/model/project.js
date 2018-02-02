@@ -12,7 +12,7 @@ module.exports = app => {
 
   Project.associate = function() {
     app.model.Group.belongsToMany(app.model.User, {
-      through: 'r_project_user'
+      through: 'project_user'
     })
   }
   return Project

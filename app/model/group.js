@@ -12,7 +12,7 @@ module.exports = app => {
 
   Group.associate = function() {
     app.model.Group.belongsToMany(app.model.User, {
-      through: 'r_group_user'
+      through: 'group_user'
     })
   }
   return Group

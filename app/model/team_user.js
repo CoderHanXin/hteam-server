@@ -17,7 +17,7 @@ module.exports = app => {
     },
     {
       freezeTableName: true,
-      tableName: 'r_team_user'
+      tableName: 'team_user'
     }
   )
 
