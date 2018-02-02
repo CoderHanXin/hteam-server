@@ -9,8 +9,8 @@ module.exports = app => {
   router.get('/api/user', controller.user.index)
   router.post('/api/user/login', controller.user.login)
   router.post('/api/user', controller.user.create)
-  router.del('/api/user/delete', controller.user.delete)
-  router.put('/api/user/update', controller.user.update)
+  router.del('/api/user/:id', controller.user.delete)
+  router.put('/api/user/:id', controller.user.update)
 
   router.get('/api/team', controller.team.index)
   router.get('/api/team/:id', controller.team.show)
