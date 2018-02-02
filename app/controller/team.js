@@ -51,6 +51,13 @@ class TeamController extends Controller {
       this.error(ERROR.MSG_TEAM_UPDATE_ERROR)
     }
   }
+
+  async removeUser() {
+    const teamId = this.ctx.params.id
+    const userId = this.ctx.params.userId
+    const result = await this.service.teamId.removeUser(teamId, userId)
+    this.success(result)
+  }
 }
 
 module.exports = TeamController

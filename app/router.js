@@ -17,6 +17,7 @@ module.exports = app => {
   router.post('/api/team/create', controller.team.create)
   router.del('/api/team/delete', controller.team.delete)
   router.put('/api/team/:id', controller.team.update)
+  router.del('/api/team/:id/remove/:userId', controller.team.removeUser)
 
   router.get('/api/group', controller.group.index)
   router.post('/api/group', controller.group.create)

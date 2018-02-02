@@ -31,6 +31,13 @@ class TeamService extends Service {
     const result = await this.app.mysql.update('t_team', team)
     return result
   }
+
+  async removeUser(id, userId) {
+    const team = await this.app.model.Team.findById(id)
+    const user = await this.app.model.User.findById(userId)
+    const result = await team.removeUser(user)
+    return result
+  }
 }
 
 module.exports = TeamService
