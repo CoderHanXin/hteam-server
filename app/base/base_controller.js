@@ -5,7 +5,11 @@ const ERROR = require('../common/error')
 class BaseController extends Controller {
   success(result) {
     if (result) {
-      this.ctx.body = { code: ERROR.CODE_OK, message: ERROR.MSG_OK, data: result }
+      this.ctx.body = {
+        code: ERROR.CODE_OK,
+        message: ERROR.MSG_OK,
+        data: result
+      }
     } else {
       this.ctx.body = { code: ERROR.CODE_OK, message: ERROR.MSG_OK }
     }
@@ -18,14 +22,13 @@ class BaseController extends Controller {
   checkResult(type, result) {
     let success = true
     switch (type) {
-      case 'create':
       case 'update':
-        if (result.affectedRows !== 1) {
+        if (!result || result[0] < 1) {
           success = false
         }
         break
       case 'delete':
-        if (result.affectedRows < 1) {
+        if (result < 1) {
           success = false
         }
         break
