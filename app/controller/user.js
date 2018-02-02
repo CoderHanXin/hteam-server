@@ -9,9 +9,9 @@ class UserController extends Controller {
     const params = this.ctx.query
     let result
     if (params.teamId) {
-      result = await this.service.user.findByParamsAndTeamId(params)
+      result = await this.service.user.findByParamsWithTeamId(params)
     } else {
-      result = await this.service.user.findByParamsAndGroupId(params)
+      result = await this.service.user.findByParamsWithGroupId(params)
     }
     this.success(result)
   }
@@ -40,29 +40,26 @@ class UserController extends Controller {
 
   async create() {
     const params = this.ctx.request.body
-    console.log(params)
     const user = params.user
+    // 判断用户名是否已被使用
     let result = await this.service.user.findByUsername(user.username)
     if (result) {
       this.error(ERROR.MSG_USER_CREATE_ERROR_USERNAME)
       return
     }
+    // md5 格式化密码
     user.password = md5(user.password, this.config.md5Key)
+    // 创建用户
     result = await this.service.user.create(user, params.teamId)
-    console.log(result)
-    const success = this.checkResult('create', result)
-    if (success) {
-      this.success({ id: result.id })
-    } else {
-      this.error(ERROR.MSG_USER_CREATE_ERROR)
-    }
+    // 返回user前删除密码字段
+    delete result.password
+    this.success(result)
   }
 
   async delete() {
-    const id = this.ctx.query.id
+    const id = this.ctx.params.id
     const result = await this.service.user.delete(id)
-    const success = this.checkResult('delete', result)
-    if (success) {
+    if (!result) {
       this.success()
     } else {
       this.error(ERROR.MSG_USER_DELETE_ERROR)
@@ -70,7 +67,9 @@ class UserController extends Controller {
   }
 
   async update() {
+    const id = this.ctx.params.id
     const user = this.ctx.request.body
+    user.id = id
     const result = await this.service.user.update(user)
     const success = this.checkResult('update', result)
     if (success) {
