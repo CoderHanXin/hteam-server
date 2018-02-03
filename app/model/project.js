@@ -11,7 +11,7 @@ module.exports = app => {
   })
 
   Project.associate = function() {
-    app.model.Group.belongsToMany(app.model.User, {
+    app.model.Project.belongsToMany(app.model.User, {
       through: 'project_user'
     })
   }
