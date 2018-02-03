@@ -1,12 +1,19 @@
 const Service = require('egg').Service
 const ROLE = require('../common/role')
 class UserService extends Service {
-  async findByUsername(username) {
+  async loginByUsername(username) {
     const result = await this.app.model.User.findOne({
       include: [{ model: this.app.model.Team }],
       where: { username }
     })
-    return result.get({ plain: true })
+    return result && result.get({ plain: true })
+  }
+
+  async findByUsername(username) {
+    const result = await this.app.model.User.findOne({
+      where: { username }
+    })
+    return result
   }
 
   async create(user, teamId) {
