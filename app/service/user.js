@@ -3,9 +3,10 @@ const ROLE = require('../common/role')
 class UserService extends Service {
   async findByUsername(username) {
     const result = await this.app.model.User.findOne({
+      include: [{ model: this.app.model.Team }],
       where: { username }
     })
-    return result
+    return result.get({ plain: true })
   }
 
   async create(user, teamId) {
