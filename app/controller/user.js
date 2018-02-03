@@ -7,11 +7,14 @@ const md5 = require('blueimp-md5')
 class UserController extends Controller {
   async index() {
     const params = this.ctx.query
-    let result
+    const result = {}
     if (params.teamId) {
-      result = await this.service.user.findByParamsWithTeamId(params)
+      const users = await this.service.user.findByParamsWithTeamId(params)
+      const groups = await this.service.group.findByTeamId(params.teamId)
+      result.users = users
+      result.groups = groups
     } else {
-      result = await this.service.user.findByParamsWithGroupId(params)
+      result.users = await this.service.user.findByParamsWithGroupId(params)
     }
     this.success(result)
   }

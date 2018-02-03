@@ -13,12 +13,7 @@ class GroupController extends Controller {
   async create() {
     const params = this.ctx.request.body
     const result = await this.service.group.create(params.group, params.users)
-    const success = this.checkResult('create', result)
-    if (success) {
-      this.success({ id: result.insertId })
-    } else {
-      this.error(ERROR.MSG_GROUP_CREATE_ERROR)
-    }
+    this.success(result)
   }
 
   async delete() {
