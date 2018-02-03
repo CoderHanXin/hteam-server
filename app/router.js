@@ -15,13 +15,12 @@ module.exports = app => {
   router.get('/api/team', controller.team.index)
   router.get('/api/team/:id', controller.team.show)
   router.post('/api/team/create', controller.team.create)
-  router.del('/api/team/delete', controller.team.delete)
   router.put('/api/team/:id', controller.team.update)
-  router.del('/api/team/:id/remove/:userId', controller.team.removeUser)
+  router.del('/api/team/:teamId/remove/:userId', controller.team.removeUser)
 
   router.get('/api/group', controller.group.index)
   router.post('/api/group', controller.group.create)
-  router.del('/api/group/delete', controller.group.delete)
+  router.del('/api/group/:id', controller.group.delete)
   router.put('/api/group/:id', controller.group.update)
 
   router.get('/api/org', controller.org.index)
