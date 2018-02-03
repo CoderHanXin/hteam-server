@@ -53,9 +53,10 @@ class TeamController extends Controller {
   }
 
   async removeUser() {
-    const teamId = this.ctx.params.id
+    const teamId = this.ctx.params.teamId
     const userId = this.ctx.params.userId
-    const result = await this.service.teamId.removeUser(teamId, userId)
+    const result = await this.service.team.removeUser(teamId, userId)
+    console.log(result)
     this.success(result)
   }
 }

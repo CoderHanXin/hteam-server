@@ -32,8 +32,8 @@ class TeamService extends Service {
     return result
   }
 
-  async removeUser(id, userId) {
-    const team = await this.app.model.Team.findById(id)
+  async removeUser(teamId, userId) {
+    const team = await this.app.model.Team.findById(teamId)
     const user = await this.app.model.User.findById(userId)
     const result = await team.removeUser(user)
     return result
