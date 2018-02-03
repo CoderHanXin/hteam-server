@@ -56,8 +56,12 @@ class TeamController extends Controller {
     const teamId = this.ctx.params.teamId
     const userId = this.ctx.params.userId
     const result = await this.service.team.removeUser(teamId, userId)
-    console.log(result)
-    this.success(result)
+    const success = this.checkResult('update', result)
+    if (success) {
+      this.success()
+    } else {
+      this.error(ERROR.MSG_TEAM_REMOVE_USER_ERROR)
+    }
   }
 }
 
