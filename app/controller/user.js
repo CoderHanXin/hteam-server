@@ -24,7 +24,7 @@ class UserController extends Controller {
    */
   async login() {
     const { username, password } = this.ctx.request.body
-    const result = await this.service.user.findByUsername(username)
+    const result = await this.service.user.loginByUsername(username)
 
     if (result) {
       if (result.password === md5(password, this.config.md5Key)) {
