@@ -23,9 +23,6 @@ module.exports = app => {
   router.del('/api/group/:id', controller.group.delete)
   router.put('/api/group/:id', controller.group.update)
 
-  router.get('/api/org', controller.org.index)
-  router.get('/api/org/tree', controller.org.tree)
-
   router.get('/api/task', controller.task.index)
   router.get('/api/task/inbox', controller.task.inbox)
   router.post('/api/task/create', controller.task.create)
