@@ -51,26 +51,6 @@ class GroupService extends Service {
       })
   }
 
-  async updateGroupsForTeamUser(teamId, userId, conn) {
-    const values = []
-    let _sql = ' select g.id groupId, g.name groupName from '
-    _sql += ' (select id, name from t_group where teamId = ?) g, '
-    values.push(teamId)
-    _sql += ' (select * from r_group_user where userId = ?) r '
-    values.push(userId)
-    _sql += ' where g.id = r.groupId'
-    console.log(_sql)
-    const result = await conn.query(_sql, values)
-    console.log(result)
-    console.log(JSON.parse(JSON.stringify(result)))
-
-    _sql =
-      "update r_team_user set groups = ('" +
-      JSON.stringify(result) +
-      "') where teamId = ? and userId = ?"
-    await conn.query(_sql, values)
-  }
-
   async delete(id) {
     const result = await this.app.model.Group.destroy({
       where: { id }
@@ -78,9 +58,31 @@ class GroupService extends Service {
     return result
   }
 
-  async update(group) {
-    const result = await this.app.mysql.update('t_group', group)
-    return result
+  async update(group, users) {
+    let userList
+    if (users) {
+      userList = await this.app.model.User.findAll({
+        where: {
+          id: {
+            $in: users
+          }
+        }
+      })
+    }
+    const editGroup = await this.app.model.Group.findById(group.id)
+    return this.app.model
+      .transaction(t => {
+        return editGroup.update(group, { transaction: t }).then(result => {
+          return editGroup.setUsers(userList, { transaction: t })
+        })
+      })
+      .then(result => {
+        return result
+      })
+      .catch(error => {
+        console.log(error)
+        throw error
+      })
   }
 }
 
