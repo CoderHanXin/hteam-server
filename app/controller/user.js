@@ -81,6 +81,34 @@ class UserController extends Controller {
       this.error(ERROR.MSG_USER_UPDATE_ERROR)
     }
   }
+
+  async changePassword() {
+    const { id, oldPass, newPass, rePass } = this.ctx.request.body
+    if (oldPass.trim() === '' || newPass.trim() === '' || rePass.trim() === '') {
+      this.error(ERROR.MSG_USER_PASSWORD_ERROR_EMPTY)
+      return
+    }
+    if (newPass !== rePass) {
+      this.error(ERROR.MSG_USER_PASSWORD_ERROR_VERIFY)
+      return
+    }
+
+    const user = await this.service.user.findById(id)
+
+    if (user.password !== md5(oldPass, this.config.md5Key)) {
+      this.error(ERROR.MSG_USER_PASSWORD_ERROR_WRONG)
+      return
+    }
+
+    const result = await this.service.user.updatePassword(id, md5(newPass, this.config.md5Key))
+
+    const success = this.checkResult('update', result)
+    if (success) {
+      this.success()
+    } else {
+      this.error(ERROR.MSG_ERROR)
+    }
+  }
 }
 
 module.exports = UserController

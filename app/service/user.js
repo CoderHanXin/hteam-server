@@ -16,6 +16,11 @@ class UserService extends Service {
     return result
   }
 
+  async findById(id) {
+    const result = await this.app.model.User.findById(id)
+    return result && result.get({ plain: true })
+  }
+
   async create(user, teamId) {
     let plain
     return this.app.model
@@ -68,6 +73,15 @@ class UserService extends Service {
     const result = await this.app.model.User.update(user, {
       where: {
         id: user.id
+      }
+    })
+    return result
+  }
+
+  async updatePassword(id, password) {
+    const result = await this.app.model.User.update({ password }, {
+      where: {
+        id
       }
     })
     return result

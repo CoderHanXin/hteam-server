@@ -11,6 +11,7 @@ module.exports = app => {
   router.post('/api/user', controller.user.create)
   router.del('/api/user/:id', controller.user.delete)
   router.put('/api/user/:id', controller.user.update)
+  router.put('/api/account/password', controller.user.changePassword)
 
   router.get('/api/team', controller.team.index)
   router.get('/api/team/:id', controller.team.show)
