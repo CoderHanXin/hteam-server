@@ -7,6 +7,9 @@ module.exports = app => {
     name: {
       type: STRING(20),
       allowNull: false
+    },
+    desc: {
+      type: STRING(200)
     }
   })
 
