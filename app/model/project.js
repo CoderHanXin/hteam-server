@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = app => {
-  const { STRING } = app.Sequelize
+  const { STRING, TINYINT } = app.Sequelize
 
   const Project = app.model.define('project', {
     name: {
@@ -10,6 +10,10 @@ module.exports = app => {
     },
     desc: {
       type: STRING(200)
+    },
+    archived: {
+      type: TINYINT(1),
+      defaultValue: false
     }
   })
 
