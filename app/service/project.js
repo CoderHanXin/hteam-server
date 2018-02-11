@@ -7,6 +7,14 @@ class ProjectService extends Service {
     })
   }
 
+  async findInfoAndUsersById(id) {
+    const result = await this.app.model.Project.findOne({
+      include: [{ model: this.app.model.User }],
+      where: { id }
+    })
+    return result && result.get({ plain: true })
+  }
+
   async create(teamId, project, users) {
     let plain
     let userList

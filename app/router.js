@@ -26,6 +26,7 @@ module.exports = app => {
   router.put('/api/group/:id', controller.group.update)
 
   router.get('/api/project', controller.project.index)
+  router.get('/api/project/:id', controller.project.show)
   router.post('/api/project', controller.project.create)
   router.put('/api/project/:id', controller.project.update)
 

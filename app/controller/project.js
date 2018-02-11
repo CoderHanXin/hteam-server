@@ -10,6 +10,12 @@ class ProjectController extends Controller {
     this.success(result)
   }
 
+  async show() {
+    const id = this.ctx.params.id
+    const result = await this.service.project.findInfoAndUsersById(id)
+    this.success(result)
+  }
+
   async create() {
     const { teamId, project, users } = this.ctx.request.body
     const result = await this.service.project.create(teamId, project, users)
