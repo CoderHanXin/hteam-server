@@ -6,12 +6,13 @@
 module.exports = app => {
   const { router, controller } = app
   router.get('/', controller.home.index)
+  router.post('/api/account/login', controller.user.login)
+  router.put('/api/account/password', controller.user.changePassword)
+
   router.get('/api/user', controller.user.index)
-  router.post('/api/user/login', controller.user.login)
   router.post('/api/user', controller.user.create)
   router.del('/api/user/:id', controller.user.delete)
   router.put('/api/user/:id', controller.user.update)
-  router.put('/api/account/password', controller.user.changePassword)
 
   router.get('/api/team', controller.team.index)
   router.get('/api/team/:id', controller.team.show)
@@ -23,6 +24,10 @@ module.exports = app => {
   router.post('/api/group', controller.group.create)
   router.del('/api/group/:id', controller.group.delete)
   router.put('/api/group/:id', controller.group.update)
+
+  router.get('/api/project', controller.project.index)
+  router.post('/api/project', controller.project.create)
+  router.put('/api/project/:id', controller.project.update)
 
   router.get('/api/task', controller.task.index)
   router.get('/api/task/inbox', controller.task.inbox)
