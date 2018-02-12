@@ -23,10 +23,5 @@ module.exports = app => {
     },
   })
 
-  Task.associate = function() {
-    app.model.Task.belongsToMany(app.model.User, {
-      through: 'task_user'
-    })
-  }
   return Task
 }

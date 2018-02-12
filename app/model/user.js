@@ -58,9 +58,7 @@ module.exports = app => {
     app.model.User.belongsToMany(app.model.Project, {
       through: 'project_user'
     })
-    app.model.User.belongsToMany(app.model.Task, {
-      through: 'task_user'
-    })
+    app.model.User.hasMany(app.model.Task)
   }
 
   return User
