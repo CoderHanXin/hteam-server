@@ -21,6 +21,7 @@ module.exports = app => {
     app.model.Project.belongsToMany(app.model.User, {
       through: 'project_user'
     })
+    app.model.Project.hasMany(app.model.Task)
   }
   return Project
 }
