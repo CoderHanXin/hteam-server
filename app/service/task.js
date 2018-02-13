@@ -3,12 +3,6 @@
 const Service = require('egg').Service
 
 class TaskService extends Service {
-  // async create(task) {
-  //   task.createTime = this.app.mysql.literals.now
-  //   const result = await this.app.mysql.insert('task', task)
-  //   return result
-  // }
-
   /**
    * 根据projectId查询任务
    * @param   {Number}    projectId 项目id
