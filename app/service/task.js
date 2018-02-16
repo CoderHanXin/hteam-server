@@ -44,7 +44,11 @@ class TaskService extends Service {
   }
 
   async update(task) {
-    const result = await this.app.model.Task.update(task)
+    const result = await this.app.model.Task.update(task, {
+      where: {
+        id: task.id
+      }
+    })
     return result
   }
 }
