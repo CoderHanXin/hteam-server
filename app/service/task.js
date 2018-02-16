@@ -11,6 +11,12 @@ class TaskService extends Service {
    */
   async findByProjectId(projectId, done) {
     return this.app.model.Task.findAll({
+      include: [
+        {
+          model: this.app.model.User,
+          attributes: { exclude: ['username', 'password'] }
+        }
+      ],
       where: { project_id: projectId, done }
     })
   }
@@ -22,6 +28,12 @@ class TaskService extends Service {
    */
   async findAllByProjectId(projectId) {
     return this.app.model.Task.findAll({
+      include: [
+        {
+          model: this.app.model.User,
+          attributes: { exclude: ['username', 'password'] }
+        }
+      ],
       where: { project_id: projectId }
     })
   }
