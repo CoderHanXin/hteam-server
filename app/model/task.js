@@ -23,5 +23,9 @@ module.exports = app => {
     },
   })
 
+  Task.associate = function() {
+    app.model.Task.belongsTo(app.model.User)
+  }
+
   return Task
 }
