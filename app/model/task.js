@@ -20,11 +20,13 @@ module.exports = app => {
     },
     done_at: {
       type: DATE
-    },
+    }
   })
 
   Task.associate = function() {
     app.model.Task.belongsTo(app.model.User)
+    app.model.Task.hasMany(app.model.TaskComment)
+    app.model.Task.hasMany(app.model.TaskEvent)
   }
 
   return Task

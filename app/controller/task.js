@@ -15,6 +15,12 @@ class TaskController extends Controller {
     this.success(result)
   }
 
+  async show() {
+    const id = this.ctx.params.id
+    const result = await this.service.task.findById(id)
+    this.success(result)
+  }
+
   async create() {
     const task = this.ctx.request.body
     const result = await this.service.task.create(task)
@@ -32,6 +38,14 @@ class TaskController extends Controller {
     } else {
       this.error(ERROR.MSG_ERROR)
     }
+  }
+
+  async createComment() {
+    const id = this.ctx.params.id
+    const comment = this.ctx.request.body
+    comment.task_id = id
+    const result = await this.service.task.createComment(comment)
+    this.success(result)
   }
 }
 

@@ -31,6 +31,8 @@ module.exports = app => {
   router.put('/api/project/:id', controller.project.update)
 
   router.get('/api/task', controller.task.index)
+  router.get('/api/task/:id', controller.task.show)
   router.post('/api/task', controller.task.create)
   router.put('/api/task/:id', controller.task.update)
+  router.post('/api/task/:id/comment', controller.task.createComment)
 }

@@ -38,6 +38,36 @@ class TaskService extends Service {
     })
   }
 
+  async findById(id) {
+    return this.app.model.Task.findOne({
+      include: [
+        {
+          model: this.app.model.User,
+          attributes: { exclude: ['username', 'password'] }
+        },
+        {
+          model: this.app.model.TaskComment,
+          include: [
+            {
+              model: this.app.model.User,
+              attributes: { exclude: ['username', 'password'] }
+            }
+          ]
+        },
+        {
+          model: this.app.model.TaskEvent,
+          include: [
+            {
+              model: this.app.model.User,
+              attributes: { exclude: ['username', 'password'] }
+            }
+          ]
+        }
+      ],
+      where: { id }
+    })
+  }
+
   async create(task) {
     const result = await this.app.model.Task.create(task)
     return result.get({ plain: true })
@@ -50,6 +80,16 @@ class TaskService extends Service {
       }
     })
     return result
+  }
+
+  async createComment(comment) {
+    const result = await this.app.model.TaskComment.create(comment)
+    return result.get({ plain: true })
+  }
+
+  async createEvent(event) {
+    const result = await this.app.model.TaskEvent.create(event)
+    return result.get({ plain: true })
   }
 }
 
