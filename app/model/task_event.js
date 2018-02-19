@@ -1,18 +1,21 @@
 'use strict'
 
 module.exports = app => {
-  const { STRING } = app.Sequelize
+  const { STRING, DATE } = app.Sequelize
 
   const TaskEvent = app.model.define(
     'task_event',
     {
+      type: {
+        type: STRING(10),
+        allowNull: false
+      },
       event: {
         type: STRING(20),
         allowNull: false
       },
-      type: {
-        type: STRING(10),
-        allowNull: false
+      deadline: {
+        type: DATE
       },
     },
     {

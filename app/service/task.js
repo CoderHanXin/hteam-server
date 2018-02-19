@@ -89,13 +89,25 @@ class TaskService extends Service {
       })
   }
 
-  async update(task) {
-    const result = await this.app.model.Task.update(task, {
-      where: {
-        id: task.id
-      }
-    })
-    return result
+  async update(task, event) {
+    return this.app.model
+      .transaction(t => {
+        return this.app.model.Task.update(task, {
+          where: {
+            id: task.id
+          },
+          transaction: t
+        }).then(result => {
+          return this.app.model.TaskEvent.create(event, { transaction: t })
+        })
+      })
+      .then(result => {
+        return result
+      })
+      .catch(error => {
+        console.log(error)
+        throw error
+      })
   }
 
   async createComment(comment) {

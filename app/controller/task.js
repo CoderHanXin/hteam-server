@@ -29,9 +29,9 @@ class TaskController extends Controller {
 
   async update() {
     const id = this.ctx.params.id
-    const task = this.ctx.request.body
+    const { task, event } = this.ctx.request.body
     task.id = id
-    const result = await this.service.task.update(task)
+    const result = await this.service.task.update(task, event)
     const success = this.checkResult('update', result)
     if (success) {
       this.success()
