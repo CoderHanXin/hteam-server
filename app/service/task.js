@@ -68,9 +68,25 @@ class TaskService extends Service {
     })
   }
 
-  async create(task) {
-    const result = await this.app.model.Task.create(task)
-    return result.get({ plain: true })
+  async create(task, event) {
+    let plain
+    return this.app.model
+      .transaction(t => {
+        return this.app.model.Task.create(task, { transaction: t }).then(
+          result => {
+            plain = result.get({ plain: true })
+            event.task_id = plain.id
+            return this.app.model.TaskEvent.create(event, { transaction: t })
+          }
+        )
+      })
+      .then(result => {
+        return plain
+      })
+      .catch(error => {
+        console.log(error)
+        throw error
+      })
   }
 
   async update(task) {

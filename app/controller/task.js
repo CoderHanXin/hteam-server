@@ -22,8 +22,8 @@ class TaskController extends Controller {
   }
 
   async create() {
-    const task = this.ctx.request.body
-    const result = await this.service.task.create(task)
+    const { task, event } = this.ctx.request.body
+    const result = await this.service.task.create(task, event)
     this.success(result)
   }
 
