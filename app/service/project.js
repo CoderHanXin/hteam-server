@@ -3,6 +3,14 @@ const Service = require('egg').Service
 class ProjectService extends Service {
   async findByTeamId(teamId) {
     return this.app.model.Project.findAll({
+      include: [
+        {
+          model: this.app.model.Task,
+          where: { done: 0 },
+          attributes: ['id'],
+          required: false
+        }
+      ],
       where: { team_id: teamId }
     })
   }
