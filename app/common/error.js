@@ -23,4 +23,7 @@ module.exports = {
   MSG_PROJECT_CREATE_ERROR: '创建项目失败',
   MSG_PROJECT_UPDATE_ERROR: '更新项目失败',
 
+  MSG_TASK_CREATE_ERROR: '创建任务失败',
+  MSG_TASK_DELETE_ERROR: '删除任务失败',
+  MSG_TASK_UPDATE_ERROR: '更新任务失败',
 }

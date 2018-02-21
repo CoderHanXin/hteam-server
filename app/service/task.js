@@ -110,6 +110,13 @@ class TaskService extends Service {
       })
   }
 
+  async delete(id) {
+    const result = await this.app.model.Task.destroy({
+      where: { id }
+    })
+    return result
+  }
+
   async createComment(comment) {
     const result = await this.app.model.TaskComment.create(comment)
     return result.get({ plain: true })
