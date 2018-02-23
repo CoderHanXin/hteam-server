@@ -14,9 +14,13 @@ module.exports = app => {
     deadline: {
       type: DATE
     },
+    level: {
+      type: TINYINT(1),
+      defaultValue: 1
+    },
     done: {
       type: TINYINT(1),
-      defaultValue: false
+      defaultValue: 0
     },
     done_at: {
       type: DATE
