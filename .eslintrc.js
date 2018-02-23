@@ -9,11 +9,13 @@ module.exports = {
   rules: {
     // allow strict mode
     strict: [0, 'global'],
+    // close linebreak style check
+    'linebreak-style': 0,
     // require trailing commas when multiline
     // 'comma-dangle': ['error', 'always-multiline'],
     'comma-dangle': 0,
     // allow async-await
-    'generator-star-spacing': 'off',
+    'generator-star-spacing': 0,
     // turn off spacing before function parenthesis
     'space-before-function-paren': 0,
     // turn off spaces inside of brackets
