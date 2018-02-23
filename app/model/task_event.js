@@ -11,7 +11,7 @@ module.exports = app => {
         allowNull: false
       },
       event: {
-        type: STRING(20),
+        type: STRING(50),
         allowNull: false
       },
       deadline: {
