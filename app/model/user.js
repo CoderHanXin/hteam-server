@@ -31,6 +31,9 @@ module.exports = app => {
       desc: {
         type: STRING(200)
       },
+      color: {
+        type: STRING(7)
+      },
       status: {
         type: TINYINT(1),
         defaultValue: true
