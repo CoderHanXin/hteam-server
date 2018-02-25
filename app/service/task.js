@@ -90,6 +90,9 @@ class TaskService extends Service {
   }
 
   async update(task, event) {
+    if (task.done) {
+      task.done_at = this.app.model.fn('NOW')
+    }
     return this.app.model
       .transaction(t => {
         return this.app.model.Task.update(task, {
