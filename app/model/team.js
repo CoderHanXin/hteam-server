@@ -16,6 +16,7 @@ module.exports = app => {
     })
     app.model.Team.hasMany(app.model.Group)
     app.model.Team.hasMany(app.model.Project)
+    app.model.Team.hasMany(app.model.Task)
   }
   return Team
 }
