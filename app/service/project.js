@@ -22,7 +22,12 @@ class ProjectService extends Service {
 
   async findInfoAndUsersById(id) {
     const result = await this.app.model.Project.findOne({
-      include: [{ model: this.app.model.User }],
+      include: [
+        {
+          model: this.app.model.User,
+          attributes: { exclude: ['username', 'password'] }
+        }
+      ],
       where: { id }
     })
     return result && result.get({ plain: true })
