@@ -31,6 +31,7 @@ class UserController extends Controller {
 
     if (result) {
       if (result.password === md5(password, this.config.md5Key)) {
+        delete result.username
         delete result.password
         this.success(result)
       } else {
