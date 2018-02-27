@@ -9,6 +9,11 @@ class ProjectService extends Service {
           where: { done: 0 },
           attributes: ['id'],
           required: false
+        },
+        {
+          model: this.app.model.User,
+          attributes: ['id'],
+          required: false
         }
       ],
       where: { team_id: teamId }
