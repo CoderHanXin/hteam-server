@@ -8,20 +8,19 @@ class StatsController extends Controller {
   }
 
   async summary() {
-    const teamId = this.ctx.query.teamId
-    const result = await this.service.stats.summary(teamId)
+    const { teamId, start, end } = this.ctx.query
+    let result
+    if (start) {
+      result = await this.service.stats.getTaskStatsWithRange(teamId, start, end)
+    } else {
+      result = await this.service.stats.getTaskStats(teamId)
+    }
     this.success(result)
   }
 
   async trend() {
     const { teamId, start, end } = this.ctx.query
     const result = await this.service.stats.trend(teamId, start, end)
-    this.success(result)
-  }
-
-  async taskStats() {
-    const { teamId, start, end } = this.ctx.query
-    const result = await this.service.stats.getTaskStats(teamId, start, end)
     this.success(result)
   }
 }

@@ -4,7 +4,7 @@ const Service = require('egg').Service
 const moment = require('moment')
 
 class StatsService extends Service {
-  async summary(teamId) {
+  async getTaskStats(teamId) {
     const processing = await this.app.model.Task.count({
       where: {
         team_id: teamId,
@@ -35,7 +35,7 @@ class StatsService extends Service {
     return { processing, done, expired }
   }
 
-  async getTaskStats(teamId, start, end) {
+  async getTaskStatsWithRange(teamId, start, end) {
     const Op = this.app.model.Op
 
     const processing = await this.app.model.Task.count({
