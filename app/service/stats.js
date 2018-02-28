@@ -5,9 +5,10 @@ const moment = require('moment')
 
 class StatsService extends Service {
   async summary(teamId) {
-    const all = await this.app.model.Task.count({
+    const processing = await this.app.model.Task.count({
       where: {
-        team_id: teamId
+        team_id: teamId,
+        done: 0
       }
     })
     const done = await this.app.model.Task.count({
@@ -31,7 +32,7 @@ class StatsService extends Service {
       }
     })
 
-    return { all, done, expired }
+    return { processing, done, expired }
   }
 
   async getTaskStats(teamId, start, end) {
