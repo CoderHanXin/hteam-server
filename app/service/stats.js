@@ -1,7 +1,6 @@
 'use strict'
 
 const Service = require('egg').Service
-// const momentTz = require('moment-timezone')
 const moment = require('moment')
 
 class StatsService extends Service {
@@ -17,17 +16,17 @@ class StatsService extends Service {
         done: 1
       }
     })
-    console.log(moment(moment().format('YYYY-MM-DD')))
-    console.log(moment(moment().format('YYYY-MM-DD')).utc().toDate())
 
-    const today = moment(moment().format('YYYY-MM-DD')).utc().toDate()
-    const op = this.app.model.Op
+    const today = moment(moment().format('YYYY-MM-DD'))
+      .utc()
+      .toDate()
+    const Op = this.app.model.Op
     const expired = await this.app.model.Task.count({
       where: {
         team_id: teamId,
         done: 0,
         deadline: {
-          [op.lt]: today
+          [Op.lt]: today
         }
       }
     })
@@ -35,8 +34,30 @@ class StatsService extends Service {
     return { all, done, expired }
   }
 
-  async taskTrend(teamId, startDate, endDate) {
-    return 0
+  async trend(teamId, startDate, endDate) {
+    const Op = this.app.model.Op
+    const create = await this.app.model.Task.findAll({
+      where: {
+        team_id: teamId,
+        created_at: {
+          [Op.between]: [startDate, endDate]
+        }
+      },
+      attributes: ['id', ['created_at', 'operateTime']]
+    })
+
+    const done = await this.app.model.Task.findAll({
+      where: {
+        team_id: teamId,
+        done: 1,
+        done_at: {
+          [Op.between]: [startDate, endDate]
+        }
+      },
+      attributes: ['id', ['done_at', 'operateTime']]
+    })
+
+    return { create, done }
   }
 }
 

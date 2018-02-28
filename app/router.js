@@ -38,4 +38,5 @@ module.exports = app => {
   router.post('/api/task/:id/comment', controller.task.createComment)
 
   router.get('/api/stats/summary', controller.stats.summary)
+  router.get('/api/stats/trend', controller.stats.trend)
 }
