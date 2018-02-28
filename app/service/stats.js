@@ -57,13 +57,8 @@ class StatsService extends Service {
         }
       }
     })
-
     const today = moment(moment().format('YYYY-MM-DD')).utc()
-    const endDate = moment(moment(end).format('YYYY-MM-DD'))
-    console.log('today')
-    console.log(today)
-    console.log('endDate')
-    console.log(endDate)
+    const endDate = moment(moment(end).format('YYYY-MM-DD')).utc()
     const diff = today.diff(endDate)
     const expiredTime = diff < 0 ? today.subtract(1, 'seconds').toDate() : endDate.subtract(1, 'seconds').toDate()
     const expired = await this.app.model.Task.count({
