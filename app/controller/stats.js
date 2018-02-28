@@ -18,6 +18,12 @@ class StatsController extends Controller {
     const result = await this.service.stats.trend(teamId, start, end)
     this.success(result)
   }
+
+  async taskStats() {
+    const { teamId, start, end } = this.ctx.query
+    const result = await this.service.stats.getTaskStats(teamId, start, end)
+    this.success(result)
+  }
 }
 
 module.exports = StatsController
