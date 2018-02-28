@@ -98,6 +98,43 @@ class StatsService extends Service {
 
     return { create, done }
   }
+
+  async findProjectsWithTasks(teamId, start, end) {
+    const Op = this.app.model.Op
+    const result = this.app.model.Project.findAll({
+      include: [
+        {
+          model: this.app.model.Task,
+          where: {
+            [Op.or]: [
+              {
+                done: 0,
+                deadline: {
+                  [Op.between]: [start, end]
+                }
+              },
+              {
+                done: 1,
+                done_at: {
+                  [Op.between]: [start, end]
+                }
+              }
+            ]
+          },
+          include: [
+            {
+              model: this.app.model.User,
+              attributes: { exclude: ['username', 'password'] }
+            }
+          ]
+        }
+      ],
+      where: {
+        team_id: teamId
+      }
+    })
+    return result
+  }
 }
 
 module.exports = StatsService
