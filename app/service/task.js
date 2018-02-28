@@ -129,36 +129,6 @@ class TaskService extends Service {
     const result = await this.app.model.TaskEvent.create(event)
     return result.get({ plain: true })
   }
-
-  async statsAll(teamId) {
-    const all = await this.app.model.Task.count({
-      where: {
-        team_id: teamId
-      }
-    })
-    const done = await this.app.model.Task.count({
-      where: {
-        team_id: teamId,
-        done: 1
-      }
-    })
-    const processing = all - done
-
-    const now = new Date()
-    const today = new Date(now.getFullYear, now.getMonth, now.getDate)
-    const op = this.app.model.Op
-    const expired = await this.app.model.Task.count({
-      where: {
-        team_id: teamId,
-        done: 0,
-        deadline: {
-          [op.lt]: today
-        }
-      }
-    })
-
-    return { all, done, processing, expired }
-  }
 }
 
 module.exports = TaskService
