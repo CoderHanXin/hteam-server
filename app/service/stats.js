@@ -38,49 +38,90 @@ class StatsService extends Service {
   async getTaskStatsWithRange(teamId, start, end) {
     const Op = this.app.model.Op
 
+    const today = moment(moment().format('YYYY-MM-DD')).utc()
+    const endDate = moment(moment(end).format('YYYY-MM-DD')).utc()
+    const diff = today.diff(endDate)
+    const expiredDate =
+      diff <= 0 ? today.toDate() : endDate.add(1, 'days').toDate()
+
     const processing = await this.app.model.Task.count({
       where: {
         team_id: teamId,
         done: 0,
-        deadline: {
-          [Op.between]: [start, end]
-        }
+        [Op.and]: [
+          {
+            deadline: {
+              [Op.gte]: start
+            }
+          },
+          {
+            deadline: {
+              [Op.lt]: endDate.toDate()
+            }
+          }
+        ]
       }
     })
-
     const done = await this.app.model.Task.count({
       where: {
         team_id: teamId,
         done: 1,
-        done_at: {
-          [Op.between]: [start, end]
-        }
+        [Op.and]: [
+          {
+            done_at: {
+              [Op.gte]: start
+            }
+          },
+          {
+            done_at: {
+              [Op.lt]: endDate.toDate()
+            }
+          }
+        ]
       }
     })
-    const today = moment(moment().format('YYYY-MM-DD')).utc()
-    const endDate = moment(moment(end).format('YYYY-MM-DD')).utc()
-    const diff = today.diff(endDate)
-    const expiredTime = diff < 0 ? today.subtract(1, 'seconds').toDate() : endDate.subtract(1, 'seconds').toDate()
     const expired = await this.app.model.Task.count({
       where: {
         team_id: teamId,
         done: 0,
-        deadline: {
-          [Op.between]: [start, expiredTime]
-        }
+        [Op.and]: [
+          {
+            deadline: {
+              [Op.gte]: start
+            }
+          },
+          {
+            deadline: {
+              [Op.lt]: expiredDate
+            }
+          }
+        ]
       }
     })
     return { processing, done, expired }
   }
 
-  async trend(teamId, startDate, endDate) {
+  async trend(teamId, start, end) {
+    const endDate = moment(moment(end).format('YYYY-MM-DD'))
+      .utc()
+      .add(1, 'days')
+      .toDate()
     const Op = this.app.model.Op
     const create = await this.app.model.Task.findAll({
       where: {
         team_id: teamId,
-        created_at: {
-          [Op.between]: [startDate, endDate]
-        }
+        [Op.and]: [
+          {
+            created_at: {
+              [Op.gte]: start
+            }
+          },
+          {
+            created_at: {
+              [Op.lt]: endDate
+            }
+          }
+        ]
       },
       attributes: ['id', ['created_at', 'operateTime']]
     })
@@ -89,9 +130,18 @@ class StatsService extends Service {
       where: {
         team_id: teamId,
         done: 1,
-        done_at: {
-          [Op.between]: [startDate, endDate]
-        }
+        [Op.and]: [
+          {
+            done_at: {
+              [Op.gte]: start
+            }
+          },
+          {
+            done_at: {
+              [Op.lt]: endDate
+            }
+          }
+        ]
       },
       attributes: ['id', ['done_at', 'operateTime']]
     })
@@ -100,8 +150,12 @@ class StatsService extends Service {
   }
 
   async findProjectsWithTasks(teamId, start, end) {
+    const endDate = moment(moment(end).format('YYYY-MM-DD'))
+      .utc()
+      .add(1, 'days')
+      .toDate()
     const Op = this.app.model.Op
-    const result = this.app.model.Project.findAll({
+    const result = await this.app.model.Project.findAll({
       include: [
         {
           model: this.app.model.Task,
@@ -109,15 +163,33 @@ class StatsService extends Service {
             [Op.or]: [
               {
                 done: 0,
-                deadline: {
-                  [Op.between]: [start, end]
-                }
+                [Op.and]: [
+                  {
+                    deadline: {
+                      [Op.gte]: start
+                    }
+                  },
+                  {
+                    deadline: {
+                      [Op.lt]: endDate
+                    }
+                  }
+                ]
               },
               {
                 done: 1,
-                done_at: {
-                  [Op.between]: [start, end]
-                }
+                [Op.and]: [
+                  {
+                    done_at: {
+                      [Op.gte]: start
+                    }
+                  },
+                  {
+                    done_at: {
+                      [Op.lt]: endDate
+                    }
+                  }
+                ]
               }
             ]
           },
