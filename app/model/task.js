@@ -29,6 +29,9 @@ module.exports = app => {
 
   Task.associate = function() {
     app.model.Task.belongsTo(app.model.User)
+    app.model.Task.belongsToMany(app.model.Tag, {
+      through: 'task_tag'
+    })
     app.model.Task.hasMany(app.model.TaskComment)
     app.model.Task.hasMany(app.model.TaskEvent)
   }
