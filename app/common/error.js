@@ -26,4 +26,8 @@ module.exports = {
   MSG_TASK_CREATE_ERROR: '创建任务失败',
   MSG_TASK_DELETE_ERROR: '删除任务失败',
   MSG_TASK_UPDATE_ERROR: '更新任务失败',
+
+  MSG_TAG_CREATE_ERROR: '创建标签失败',
+  MSG_TAG_DELETE_ERROR: '删除标签失败',
+  MSG_TAG_UPDATE_ERROR: '更新标签失败',
 }
