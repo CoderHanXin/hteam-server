@@ -20,6 +20,11 @@ class TaskController extends Controller {
     const result = await this.service.task.findById(id)
     this.success(result)
   }
+  async showEvents() {
+    const id = this.ctx.params.id
+    const result = await this.service.task.findEventsById(id)
+    this.success(result)
+  }
 
   async create() {
     const { task, event } = this.ctx.request.body
@@ -48,6 +53,20 @@ class TaskController extends Controller {
     } else {
       this.error(ERROR.MSG_TASK_DELETE_ERROR)
     }
+  }
+
+  async addTag() {
+    const taskId = this.ctx.params.id
+    const { tagId, event } = this.ctx.request.body
+    await this.service.task.addTag(taskId, tagId, event)
+    this.success()
+  }
+
+  async removeTag() {
+    const taskId = this.ctx.params.id
+    const { tagId, event } = this.ctx.request.body
+    await this.service.task.removeTag(taskId, tagId, event)
+    this.success()
   }
 
   async createComment() {

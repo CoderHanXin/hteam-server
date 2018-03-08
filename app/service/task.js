@@ -46,16 +46,11 @@ class TaskService extends Service {
           attributes: { exclude: ['username', 'password'] }
         },
         {
-          model: this.app.model.TaskComment,
-          include: [
-            {
-              model: this.app.model.User,
-              attributes: { exclude: ['username', 'password'] }
-            }
-          ]
+          model: this.app.model.Tag,
+          attributes: ['id', 'name', 'color']
         },
         {
-          model: this.app.model.TaskEvent,
+          model: this.app.model.TaskComment,
           include: [
             {
               model: this.app.model.User,
@@ -66,6 +61,20 @@ class TaskService extends Service {
       ],
       where: { id }
     })
+  }
+
+  async findEventsById(id) {
+    const result = await this.app.model.TaskEvent.findAll({
+      include: [
+        {
+          model: this.app.model.User,
+          attributes: { exclude: ['username', 'password'] }
+        }
+      ],
+      where: { task_id: id },
+      order: [['id', 'DESC']]
+    })
+    return result
   }
 
   async create(task, event) {
@@ -118,6 +127,42 @@ class TaskService extends Service {
       where: { id }
     })
     return result
+  }
+
+  async addTag(taskId, tagId, event) {
+    const task = await this.app.model.Task.findById(taskId)
+    const tag = await this.app.model.Tag.findById(tagId)
+    return this.app.model
+      .transaction(t => {
+        return task.addTag(tag, { transaction: t }).then(result => {
+          return this.app.model.TaskEvent.create(event, { transaction: t })
+        })
+      })
+      .then(result => {
+        return result
+      })
+      .catch(error => {
+        console.log(error)
+        throw error
+      })
+  }
+
+  async removeTag(taskId, tagId, event) {
+    const task = await this.app.model.Task.findById(taskId)
+    const tag = await this.app.model.Tag.findById(tagId)
+    return this.app.model
+      .transaction(t => {
+        return task.removeTag(tag, { transaction: t }).then(result => {
+          return this.app.model.TaskEvent.create(event, { transaction: t })
+        })
+      })
+      .then(result => {
+        return result
+      })
+      .catch(error => {
+        console.log(error)
+        throw error
+      })
   }
 
   async createComment(comment) {
