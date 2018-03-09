@@ -15,6 +15,10 @@ class TaskService extends Service {
         {
           model: this.app.model.User,
           attributes: { exclude: ['username', 'password'] }
+        },
+        {
+          model: this.app.model.Tag,
+          attributes: ['id', 'name', 'color']
         }
       ],
       where: { project_id: projectId, done }
@@ -32,6 +36,10 @@ class TaskService extends Service {
         {
           model: this.app.model.User,
           attributes: { exclude: ['username', 'password'] }
+        },
+        {
+          model: this.app.model.Tag,
+          attributes: ['id', 'name', 'color']
         }
       ],
       where: { project_id: projectId }
