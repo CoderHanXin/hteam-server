@@ -197,8 +197,16 @@ class StatsService extends Service {
             {
               model: this.app.model.User,
               attributes: { exclude: ['username', 'password'] }
+            },
+            {
+              model: this.app.model.Tag,
+              attributes: ['id', 'name', 'color']
             }
           ]
+        },
+        {
+          model: this.app.model.User,
+          attributes: { exclude: ['username', 'password'] }
         }
       ],
       where: {
