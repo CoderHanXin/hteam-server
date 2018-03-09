@@ -8,14 +8,23 @@ class StatsController extends Controller {
   }
 
   async summary() {
-    const { teamId, start, end } = this.ctx.query
+    const { teamId, start, end, userId } = this.ctx.query
     let result
     if (start) {
-      result = await this.service.stats.getTaskStatsWithRange(
-        teamId,
-        start,
-        end
-      )
+      if (userId) {
+        result = await this.service.stats.getTaskStatsWithRangeAndUserId(
+          teamId,
+          start,
+          end,
+          userId
+        )
+      } else {
+        result = await this.service.stats.getTaskStatsWithRange(
+          teamId,
+          start,
+          end
+        )
+      }
     } else {
       result = await this.service.stats.getTaskStats(teamId)
     }
@@ -30,7 +39,11 @@ class StatsController extends Controller {
 
   async projectsWithTasks() {
     const { teamId, start, end } = this.ctx.query
-    const result = await this.service.stats.findProjectsWithTasks(teamId, start, end)
+    const result = await this.service.stats.findProjectsWithTasks(
+      teamId,
+      start,
+      end
+    )
     this.success(result)
   }
 }

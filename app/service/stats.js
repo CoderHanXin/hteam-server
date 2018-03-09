@@ -101,6 +101,75 @@ class StatsService extends Service {
     return { processing, done, expired }
   }
 
+  async getTaskStatsWithRangeAndUserId(teamId, start, end, userId) {
+    const Op = this.app.model.Op
+
+    const today = moment(moment().format('YYYY-MM-DD')).utc()
+    const endDate = moment(moment(end).format('YYYY-MM-DD')).utc()
+    const diff = today.diff(endDate)
+    const expiredDate =
+      diff <= 0 ? today.toDate() : endDate.add(1, 'days').toDate()
+
+    const processing = await this.app.model.Task.count({
+      where: {
+        team_id: teamId,
+        user_id: userId,
+        done: 0,
+        [Op.and]: [
+          {
+            deadline: {
+              [Op.gte]: start
+            }
+          },
+          {
+            deadline: {
+              [Op.lt]: endDate.toDate()
+            }
+          }
+        ]
+      }
+    })
+    const done = await this.app.model.Task.count({
+      where: {
+        team_id: teamId,
+        user_id: userId,
+        done: 1,
+        [Op.and]: [
+          {
+            done_at: {
+              [Op.gte]: start
+            }
+          },
+          {
+            done_at: {
+              [Op.lt]: endDate.toDate()
+            }
+          }
+        ]
+      }
+    })
+    const expired = await this.app.model.Task.count({
+      where: {
+        team_id: teamId,
+        user_id: userId,
+        done: 0,
+        [Op.and]: [
+          {
+            deadline: {
+              [Op.gte]: start
+            }
+          },
+          {
+            deadline: {
+              [Op.lt]: expiredDate
+            }
+          }
+        ]
+      }
+    })
+    return { processing, done, expired }
+  }
+
   async trend(teamId, start, end) {
     const endDate = moment(moment(end).format('YYYY-MM-DD'))
       .utc()
