@@ -48,4 +48,6 @@ module.exports = app => {
   router.get('/api/stats/summary', controller.stats.summary)
   router.get('/api/stats/trend', controller.stats.trend)
   router.get('/api/stats/pwt', controller.stats.projectsWithTasks)
+
+  router.get('/api/upload/token', controller.common.uploadToken)
 }
