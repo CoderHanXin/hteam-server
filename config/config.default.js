@@ -25,5 +25,12 @@ module.exports = appInfo => {
     credentials: true
   }
 
+  // 七牛配置，上传图片用
+  config.qiniu = {
+    accessKey: 'your_access_key',
+    secretKey: 'your_secret_key',
+    bucket: 'your_bucket'
+  }
+
   return config
 }
