@@ -42,8 +42,7 @@ class UserController extends Controller {
   }
 
   async create() {
-    const params = this.ctx.request.body
-    const user = params.user
+    const { user, teamId } = this.ctx.request.body
     // 判断用户名是否已被使用
     let result = await this.service.user.findByUsername(user.username)
     if (result) {
@@ -53,7 +52,7 @@ class UserController extends Controller {
     // md5 格式化密码
     user.password = md5(user.password, this.config.md5Key)
     // 创建用户
-    result = await this.service.user.create(user, params.teamId)
+    result = await this.service.user.create(user, teamId)
     // 返回user前删除密码字段
     delete result.password
     this.success(result)
@@ -84,7 +83,11 @@ class UserController extends Controller {
 
   async changePassword() {
     const { id, oldPass, newPass, rePass } = this.ctx.request.body
-    if (oldPass.trim() === '' || newPass.trim() === '' || rePass.trim() === '') {
+    if (
+      oldPass.trim() === '' ||
+      newPass.trim() === '' ||
+      rePass.trim() === ''
+    ) {
       this.error(ERROR.MSG_USER_PASSWORD_ERROR_EMPTY)
       return
     }
@@ -100,7 +103,10 @@ class UserController extends Controller {
       return
     }
 
-    const result = await this.service.user.updatePassword(id, md5(newPass, this.config.md5Key))
+    const result = await this.service.user.updatePassword(
+      id,
+      md5(newPass, this.config.md5Key)
+    )
 
     const success = this.checkResult('update', result)
     if (success) {
