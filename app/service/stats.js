@@ -31,7 +31,6 @@ class StatsService extends Service {
         }
       }
     })
-
     return { processing, done, expired }
   }
 
@@ -170,6 +169,94 @@ class StatsService extends Service {
     return { processing, done, expired }
   }
 
+  async getTaskStatsGroupByProject(teamId) {
+    const projects = await this.app.model.Project.findAll({
+      attributes: ['id', 'name'],
+      where: {
+        team_id: teamId
+      },
+      raw: true
+    })
+
+    const processing = await this.app.model.Task.findAll({
+      attributes: [
+        ['project_id', 'projectId'],
+        [this.app.model.fn('COUNT', 1), 'cnt']
+      ],
+      where: {
+        team_id: teamId,
+        done: 0
+      },
+      group: 'projectId',
+      raw: true
+    })
+    const done = await this.app.model.Task.findAll({
+      attributes: [
+        ['project_id', 'projectId'],
+        [this.app.model.fn('COUNT', 1), 'cnt']
+      ],
+      where: {
+        team_id: teamId,
+        done: 1
+      },
+      group: 'projectId',
+      raw: true
+    })
+
+    const today = moment(moment().format('YYYY-MM-DD'))
+      .utc()
+      .toDate()
+    const Op = this.app.model.Op
+    const expired = await this.app.model.Task.findAll({
+      attributes: [
+        ['project_id', 'projectId'],
+        [this.app.model.fn('COUNT', 1), 'cnt']
+      ],
+      where: {
+        team_id: teamId,
+        done: 0,
+        deadline: {
+          [Op.lt]: today
+        }
+      },
+      group: 'projectId',
+      raw: true
+    })
+
+    const list = []
+
+    for (const project of projects) {
+      const item = {}
+      item.id = project.id
+      item.name = project.name
+      item.processing = 0
+      item.done = 0
+      item.expired = 0
+      for (const p of processing) {
+        if (project.id === p.projectId) {
+          item.processing = p.cnt
+          break
+        }
+      }
+      for (const d of done) {
+        if (project.id === d.projectId) {
+          item.done = d.cnt
+          break
+        }
+      }
+      for (const e of expired) {
+        if (project.id === e.projectId) {
+          item.expired = e.cnt
+          break
+        }
+      }
+      const all = item.done + item.processing
+      item.rate = all === 0 ? 0 : Number((item.done * 100 / all).toFixed())
+      list.push(item)
+    }
+
+    return list
+  }
   async trend(teamId, start, end) {
     const endDate = moment(moment(end).format('YYYY-MM-DD'))
       .utc()

@@ -31,6 +31,12 @@ class StatsController extends Controller {
     this.success(result)
   }
 
+  async project() {
+    const { teamId } = this.ctx.query
+    const result = await this.service.stats.getTaskStatsGroupByProject(teamId)
+    this.success(result)
+  }
+
   async trend() {
     const { teamId, start, end } = this.ctx.query
     const result = await this.service.stats.trend(teamId, start, end)

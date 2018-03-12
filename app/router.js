@@ -46,6 +46,7 @@ module.exports = app => {
   router.del('/api/tag/:id', controller.tag.delete)
 
   router.get('/api/stats/summary', controller.stats.summary)
+  router.get('/api/stats/project', controller.stats.project)
   router.get('/api/stats/trend', controller.stats.trend)
   router.get('/api/stats/pwt', controller.stats.projectsWithTasks)
 
