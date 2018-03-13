@@ -3,6 +3,8 @@
 const Controller = require('../base/base_controller')
 const ERROR = require('../common/error')
 const md5 = require('blueimp-md5')
+const jwt = require('jsonwebtoken')
+const resolveAuthHeader = require('../utils/auth_header')
 
 class UserController extends Controller {
   async index() {
@@ -23,22 +25,38 @@ class UserController extends Controller {
    * login
    * @param {string} username 用户名
    * @param {string} password 密码
-   * @description return {code:0, message:'', user:user}
+   * @description return {code:0, message:'', {user, token}}
    */
   async login() {
     const { username, password } = this.ctx.request.body
-    const result = await this.service.user.loginByUsername(username)
+    const user = await this.service.user.loginByUsername(username)
 
-    if (result) {
-      if (result.password === md5(password, this.config.md5Key)) {
-        delete result.password
-        this.success(result)
+    if (user) {
+      if (user.password === md5(password, this.config.md5Key)) {
+        delete user.password
+        const token = jwt.sign(
+          { id: user.id, username: user.username },
+          this.config.jwt.secret,
+          { expiresIn: '14d' }
+        )
+        this.success({ user, token })
       } else {
         this.error(ERROR.MSG_USER_LOGIN_FAILED)
       }
     } else {
       this.error(ERROR.MSG_USER_LOGIN_FAILED)
     }
+  }
+
+  /**
+   * 根据token获取用户信息
+   * @description return {code:0, message:'', {user}}
+   */
+  async showByToken() {
+    const token = resolveAuthHeader(this.ctx)
+    const decoded = jwt.verify(token, this.config.jwt.secret)
+    const user = await this.service.user.findByIdIncludeTeam(decoded.id)
+    this.success({ user })
   }
 
   async create() {
