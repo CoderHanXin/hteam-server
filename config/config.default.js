@@ -28,7 +28,7 @@ module.exports = appInfo => {
   config.jwt = {
     secret: 'this_is_jwt_secret_key',
     enable: true,
-    ignore: ['/api/account/login', '/api/account']
+    ignore: ['/api/account/login', '/api/account/show']
   }
 
   // 七牛配置，上传图片用
