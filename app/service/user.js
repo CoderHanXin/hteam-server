@@ -17,6 +17,14 @@ class UserService extends Service {
     return result && result.get({ plain: true })
   }
 
+  async findByWxOpenIdIncludeTeam(openid) {
+    const result = await this.app.model.User.findOne({
+      include: [{ model: this.app.model.Team }],
+      where: { openid }
+    })
+    return result && result.get({ plain: true })
+  }
+
   async findByUsername(username) {
     const result = await this.app.model.User.findOne({
       where: { username }
@@ -55,19 +63,6 @@ class UserService extends Service {
         console.log(error)
         throw error
       })
-    // const result = await this.app.model.User.create(user)
-    // // const team = await this.app.model.Team.findById(teamId)
-    // // await result.addTeam(team, {
-    // //   through: { role_id: ROLE.MEMBER, role_name: ROLE.MEMBER_TITLE }
-    // // })
-    // const plain = result.get({ plain: true })
-    // await this.app.model.TeamUser.create({
-    //   team_id: teamId,
-    //   user_id: plain.id,
-    //   role_id: ROLE.MEMBER,
-    //   role_name: ROLE.MEMBER_TITLE
-    // })
-    // return plain
   }
 
   async delete(id) {
@@ -87,11 +82,14 @@ class UserService extends Service {
   }
 
   async updatePassword(id, password) {
-    const result = await this.app.model.User.update({ password }, {
-      where: {
-        id
+    const result = await this.app.model.User.update(
+      { password },
+      {
+        where: {
+          id
+        }
       }
-    })
+    )
     return result
   }
 

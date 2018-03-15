@@ -6,6 +6,8 @@ const md5 = require('blueimp-md5')
 const jwt = require('jsonwebtoken')
 const resolveAuthHeader = require('../utils/auth_header')
 
+const WXMP_LOGIN_URL =
+  'https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code'
 class UserController extends Controller {
   async index() {
     const params = this.ctx.query
@@ -45,6 +47,31 @@ class UserController extends Controller {
       }
     } else {
       this.error(ERROR.MSG_USER_LOGIN_FAILED)
+    }
+  }
+
+  async wxlogin() {
+    const { user } = this.ctx.request.body
+    const url = WXMP_LOGIN_URL.replace('APPID', this.config.wxmp.appid)
+      .replace('SECRET', this.config.wxmp.secret)
+      .replace('JSCODE', user.code)
+    const result = await this.ctx.curl(url, {
+      method: 'get',
+      dataType: 'json',
+      contentType: 'json'
+    })
+    console.log(result.data)
+    if (result.errcode) {
+      this.error(result.errmsg, result.errcode)
+    } else {
+      const user = await this.service.user.findByWxOpenIdIncludeTeam(
+        result.openid
+      )
+      if (user) {
+        this.success(user)
+      } else {
+        this.success()
+      }
     }
   }
 
