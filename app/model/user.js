@@ -37,9 +37,6 @@ module.exports = app => {
       avatar: {
         type: STRING(255)
       },
-      openid: {
-        type: STRING(30)
-      },
       status: {
         type: TINYINT(1),
         defaultValue: true

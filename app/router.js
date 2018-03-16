@@ -9,6 +9,7 @@ module.exports = app => {
   router.get('/api/account/show', controller.user.showByToken)
   router.post('/api/account/login', controller.user.login)
   router.post('/api/account/wxlogin', controller.user.wxlogin)
+  router.post('/api/account/wxbind', controller.user.wxbind)
   router.put('/api/account/password', controller.user.changePassword)
 
   router.get('/api/user', controller.user.index)

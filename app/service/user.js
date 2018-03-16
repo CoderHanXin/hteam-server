@@ -12,15 +12,17 @@ class UserService extends Service {
   async findByIdIncludeTeam(id) {
     const result = await this.app.model.User.findOne({
       include: [{ model: this.app.model.Team }],
+      attributes: { exclude: ['username', 'password'] },
       where: { id }
     })
     return result && result.get({ plain: true })
   }
 
-  async findByWxOpenIdIncludeTeam(openid) {
+  async findByWxuserIdIncludeTeam(wxuserId) {
     const result = await this.app.model.User.findOne({
       include: [{ model: this.app.model.Team }],
-      where: { openid }
+      attributes: { exclude: ['username', 'password'] },
+      where: { wxuser_id: wxuserId }
     })
     return result && result.get({ plain: true })
   }

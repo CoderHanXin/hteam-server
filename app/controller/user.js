@@ -6,8 +6,6 @@ const md5 = require('blueimp-md5')
 const jwt = require('jsonwebtoken')
 const resolveAuthHeader = require('../utils/auth_header')
 
-const WXMP_LOGIN_URL =
-  'https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code'
 class UserController extends Controller {
   async index() {
     const params = this.ctx.query
@@ -36,11 +34,9 @@ class UserController extends Controller {
     if (user) {
       if (user.password === md5(password, this.config.md5Key)) {
         delete user.password
-        const token = jwt.sign(
-          { id: user.id, username: user.username },
-          this.config.jwt.secret,
-          { expiresIn: '14d' }
-        )
+        const token = jwt.sign({ id: user.id }, this.config.jwt.secret, {
+          expiresIn: '14d'
+        })
         this.success({ user, token })
       } else {
         this.error(ERROR.MSG_USER_LOGIN_FAILED)
@@ -52,32 +48,66 @@ class UserController extends Controller {
 
   async wxlogin() {
     const { user } = this.ctx.request.body
-    const url = WXMP_LOGIN_URL.replace('APPID', this.config.wxmp.appid)
-      .replace('SECRET', this.config.wxmp.secret)
-      .replace('JSCODE', user.code)
-    const result = await this.ctx.curl(url, {
-      method: 'get',
-      dataType: 'json',
-      contentType: 'json'
-    })
-    console.log(result.data)
-    if (result.errcode) {
-      this.error(result.errmsg, result.errcode)
-    } else {
-      const user = await this.service.user.findByWxOpenIdIncludeTeam(
-        result.openid
-      )
+    const wxData = await this.service.wechat.getOpenidAndSessionKey(user.code)
+    console.log('wxData', wxData.data)
+    if (wxData.data.errcode) {
+      this.error(wxData.data.errmsg, wxData.data.errcode)
+      return
+    }
+    const result = await this.service.wxuser.findOrCreate(wxData.data.openid)
+    const { wxuser, created } = result
+    if (!created) {
+      const user = await this.service.user.findByWxuserIdIncludeTeam(wxuser.id)
       if (user) {
-        this.success(user)
-      } else {
-        this.success()
+        const token = jwt.sign({ id: user.id }, this.config.jwt.secret, {
+          expiresIn: '14d'
+        })
+        this.success({ user, token })
+        return
       }
+    }
+    const token = jwt.sign(
+      { id: wxuser.id, type: 'wx' },
+      this.config.jwt.secret,
+      {
+        expiresIn: '14d'
+      }
+    )
+    this.success({ token })
+  }
+
+  async wxbind() {
+    const { username, password } = this.ctx.request.body
+    const user = await this.service.user.findByUsername(username)
+
+    if (!user) {
+      this.error(ERROR.MSG_USER_LOGIN_FAILED)
+      return
+    }
+    if (user.password !== md5(password, this.config.md5Key)) {
+      this.error(ERROR.MSG_USER_LOGIN_FAILED)
+      return
+    }
+
+    const token = resolveAuthHeader(this.ctx)
+    const decoded = jwt.verify(token, this.config.jwt.secret)
+    if (decoded.type === 'wx') {
+      user.wxuser_id = decoded.id
+      await user.save()
+
+      delete user.password
+      const token = jwt.sign({ id: user.id }, this.config.jwt.secret, {
+        expiresIn: '14d'
+      })
+      this.success({ user, token })
+    } else {
+      this.error('token error')
     }
   }
 
   /**
    * 根据token获取用户信息
-   * @description return {code:0, message:'', {user}}
+   * @description return { user }
    */
   async showByToken() {
     const token = resolveAuthHeader(this.ctx)
