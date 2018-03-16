@@ -28,7 +28,7 @@ module.exports = appInfo => {
   config.jwt = {
     secret: 'this_is_jwt_secret_key',
     enable: true,
-    ignore: ['/api/account/login', '/api/account/wxlogin', '/api/account/show']
+    ignore: ['/api/account/login', '/api/account/wxlogin', '/api/account/wxbind', '/api/account/show']
   }
 
   // 微信小程序配置
