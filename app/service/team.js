@@ -1,6 +1,7 @@
 'use strict'
 
 const Service = require('egg').Service
+const ROLE = require('../common/role')
 
 class TeamService extends Service {
   async findById(id) {
@@ -14,9 +15,33 @@ class TeamService extends Service {
     return result
   }
 
-  async create(team) {
-    const result = await this.app.model.Team.create(team)
-    return result
+  async create(name, userId) {
+    let plain
+    return this.app.model
+      .transaction(t => {
+        return this.app.model.Team.create({ name }, { transaction: t }).then(
+          result => {
+            plain = result.get({ plain: true })
+            return this.app.model.TeamUser.create(
+              {
+                team_id: plain.id,
+                user_id: userId,
+                role_id: ROLE.SUPERADMIN,
+                role_name: ROLE.SUPERADMIN_TITLE
+              },
+              { transaction: t }
+            )
+          }
+        )
+      })
+      .then(result => {
+        plain.team_user = result
+        return plain
+      })
+      .catch(error => {
+        console.log(error)
+        throw error
+      })
   }
 
   async update(team) {

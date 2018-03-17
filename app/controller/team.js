@@ -20,14 +20,9 @@ class TeamController extends Controller {
   }
 
   async create() {
-    const team = this.ctx.request.body
-    const result = await this.service.team.create(team)
-    const success = this.checkResult('create', result)
-    if (success) {
-      this.success({ id: result.insertId })
-    } else {
-      this.error(ERROR.MSG_TEAM_CREATE_ERROR)
-    }
+    const { name, userId } = this.ctx.request.body
+    const result = await this.service.team.create(name, userId)
+    this.success(result)
   }
 
   async delete() {
