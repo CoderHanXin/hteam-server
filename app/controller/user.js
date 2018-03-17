@@ -21,6 +21,45 @@ class UserController extends Controller {
     this.success(result)
   }
 
+  async register() {
+    const { username, password, name } = this.ctx.request.body
+    // 判断用户名是否已被使用
+    const result = await this.service.user.findByUsername(username)
+    if (result) {
+      this.error(ERROR.MSG_USER_CREATE_ERROR_USERNAME)
+      return
+    }
+    // md5 格式化密码
+    const md5Pass = md5(password, this.config.md5Key)
+    // 创建用户
+    const user = await this.service.user.create({
+      username,
+      password: md5Pass,
+      name
+    })
+    // 判断是否有token，如果 tpye=wx，则绑定微信用户
+    const token = resolveAuthHeader(this.ctx)
+    if (token) {
+      const decoded = jwt.verify(token, this.config.jwt.secret)
+      if (decoded.type === 'wx') {
+        user.wxuser_id = decoded.id
+        await user.save()
+        delete user.password
+        const token = jwt.sign({ id: user.id }, this.config.jwt.secret, {
+          expiresIn: '14d'
+        })
+        this.success({ user, token })
+      } else {
+        this.error('token error')
+      }
+    } else {
+      const token = jwt.sign({ id: user.id }, this.config.jwt.secret, {
+        expiresIn: '14d'
+      })
+      this.success({ user, token })
+    }
+  }
+
   /**
    * login
    * @param {string} username 用户名
@@ -112,8 +151,12 @@ class UserController extends Controller {
   async showByToken() {
     const token = resolveAuthHeader(this.ctx)
     const decoded = jwt.verify(token, this.config.jwt.secret)
-    const user = await this.service.user.findByIdIncludeTeam(decoded.id)
-    this.success({ user })
+    if (decoded.type) {
+      this.error('token error')
+    } else {
+      const user = await this.service.user.findByIdIncludeTeam(decoded.id)
+      this.success({ user })
+    }
   }
 
   async create() {
@@ -127,7 +170,7 @@ class UserController extends Controller {
     // md5 格式化密码
     user.password = md5(user.password, this.config.md5Key)
     // 创建用户
-    result = await this.service.user.create(user, teamId)
+    result = await this.service.user.createTeamUser(user, teamId)
     // 返回user前删除密码字段
     delete result.password
     this.success(result)

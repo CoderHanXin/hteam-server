@@ -39,7 +39,12 @@ class UserService extends Service {
     return result && result.get({ plain: true })
   }
 
-  async create(user, teamId) {
+  async create(user) {
+    const result = await this.app.model.User.create(user)
+    return result
+  }
+
+  async createTeamUser(user, teamId) {
     let plain
     return this.app.model
       .transaction(t => {
