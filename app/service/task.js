@@ -46,6 +46,19 @@ class TaskService extends Service {
     })
   }
 
+  async findByUserId(userId, done = 0) {
+    const result = this.app.model.Task.findAll({
+      include: [
+        {
+          model: this.app.model.Tag,
+          attributes: ['id', 'name', 'color']
+        }
+      ],
+      where: { user_id: userId, done }
+    })
+    return result
+  }
+
   async findById(id) {
     return this.app.model.Task.findOne({
       include: [
