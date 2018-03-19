@@ -19,6 +19,14 @@ class TaskController extends Controller {
     this.success(result)
   }
 
+  async page() {
+    const { userId, done, page, size } = this.ctx.query
+    console.log(`page:${page}`)
+    console.log(`size:${size}`)
+    const result = await this.service.task.pageByUserId(userId, done, page, size)
+    this.success(result)
+  }
+
   async show() {
     const id = this.ctx.params.id
     const result = await this.service.task.findById(id)

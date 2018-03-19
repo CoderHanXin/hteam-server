@@ -67,6 +67,29 @@ class TaskService extends Service {
     return result
   }
 
+  async pageByUserId(userId, done = 0, page, size) {
+    const result = this.app.model.Task.findAndCountAll({
+      include: [
+        {
+          model: this.app.model.Project,
+          attributes: ['id', 'name']
+        },
+        {
+          model: this.app.model.User,
+          attributes: ['id', 'name', 'color', 'avatar']
+        },
+        {
+          model: this.app.model.Tag,
+          attributes: ['id', 'name', 'color']
+        }
+      ],
+      where: { user_id: userId, done },
+      offset: (page - 1) * size,
+      limit: size * 1
+    })
+    return result
+  }
+
   async findById(id) {
     return this.app.model.Task.findOne({
       include: [
