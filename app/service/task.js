@@ -50,6 +50,14 @@ class TaskService extends Service {
     const result = this.app.model.Task.findAll({
       include: [
         {
+          model: this.app.model.Project,
+          attributes: ['id', 'name']
+        },
+        {
+          model: this.app.model.User,
+          attributes: ['id', 'name', 'color', 'avatar']
+        },
+        {
           model: this.app.model.Tag,
           attributes: ['id', 'name', 'color']
         }
