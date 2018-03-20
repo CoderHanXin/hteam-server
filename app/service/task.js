@@ -46,7 +46,7 @@ class TaskService extends Service {
     })
   }
 
-  async findByUserId(userId, done = 0) {
+  async findByUserId(teamId, userId, done = 0) {
     const result = this.app.model.Task.findAll({
       include: [
         {
@@ -62,12 +62,16 @@ class TaskService extends Service {
           attributes: ['id', 'name', 'color']
         }
       ],
-      where: { user_id: userId, done }
+      where: {
+        team_id: teamId,
+        user_id: userId,
+        done
+      }
     })
     return result
   }
 
-  async pageByUserId(userId, done = 0, page, size) {
+  async pageByUserId(teamId, userId, done = 0, page, size) {
     const result = this.app.model.Task.findAndCountAll({
       include: [
         {
@@ -83,7 +87,33 @@ class TaskService extends Service {
           attributes: ['id', 'name', 'color']
         }
       ],
-      where: { user_id: userId, done },
+      where: {
+        team_id: teamId,
+        user_id: userId,
+        done
+      },
+      offset: (page - 1) * size,
+      limit: size * 1
+    })
+    return result
+  }
+
+  async pageByProjectId(project, done = 0, page, size) {
+    const result = this.app.model.Task.findAndCountAll({
+      include: [
+        {
+          model: this.app.model.User,
+          attributes: ['id', 'name', 'color', 'avatar']
+        },
+        {
+          model: this.app.model.Tag,
+          attributes: ['id', 'name', 'color']
+        }
+      ],
+      where: {
+        project_id: project,
+        done
+      },
       offset: (page - 1) * size,
       limit: size * 1
     })

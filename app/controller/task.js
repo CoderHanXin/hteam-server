@@ -5,7 +5,7 @@ const ERROR = require('../common/error')
 
 class TaskController extends Controller {
   async index() {
-    const { projectId, userId, done } = this.ctx.query
+    const { teamId, projectId, userId, done } = this.ctx.query
     let result
     if (projectId) {
       if (done === undefined) {
@@ -14,16 +14,30 @@ class TaskController extends Controller {
         result = await this.service.task.findByProjectId(projectId, done)
       }
     } else {
-      result = await this.service.task.findByUserId(userId, done)
+      result = await this.service.task.findByUserId(teamId, userId, done)
     }
     this.success(result)
   }
 
   async page() {
-    const { userId, done, page, size } = this.ctx.query
-    console.log(`page:${page}`)
-    console.log(`size:${size}`)
-    const result = await this.service.task.pageByUserId(userId, done, page, size)
+    const { teamId, projectId, userId, done, page, size } = this.ctx.query
+    let result
+    if (projectId) {
+      result = await this.service.task.pageByProjectId(
+        projectId,
+        done,
+        page,
+        size
+      )
+    } else {
+      result = await this.service.task.pageByUserId(
+        teamId,
+        userId,
+        done,
+        page,
+        size
+      )
+    }
     this.success(result)
   }
 
