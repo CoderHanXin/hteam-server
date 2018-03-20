@@ -100,10 +100,10 @@ class UserService extends Service {
     return result
   }
 
-  async findByParamsWithGroupId(params) {
-    const group = await this.app.model.Group.findById(params.groupId)
+  async findByGroupId(groupId, status = 1) {
+    const group = await this.app.model.Group.findById(groupId)
     const users = await group.getUsers({
-      where: { status: params.status }
+      where: { status }
     })
     const result = []
     for (const user of users) {
@@ -112,10 +112,10 @@ class UserService extends Service {
     return result
   }
 
-  async findByParamsWithTeamId(params) {
-    const team = await this.app.model.Team.findById(params.teamId)
+  async findByTeamId(teamId, status = 1) {
+    const team = await this.app.model.Team.findById(teamId)
     const users = await team.getUsers({
-      where: { status: params.status }
+      where: { status }
     })
     const result = []
     for (const user of users) {

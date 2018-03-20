@@ -8,15 +8,21 @@ const resolveAuthHeader = require('../utils/auth_header')
 
 class UserController extends Controller {
   async index() {
-    const params = this.ctx.query
+    const { teamId, groupId, status } = this.ctx.query
     const result = {}
-    if (params.teamId) {
-      const users = await this.service.user.findByParamsWithTeamId(params)
-      const groups = await this.service.group.findByTeamId(params.teamId)
+    if (teamId) {
+      const users = await this.service.user.findByTeamId(
+        teamId,
+        status
+      )
+      const groups = await this.service.group.findByTeamId(teamId)
       result.users = users
       result.groups = groups
     } else {
-      result.users = await this.service.user.findByParamsWithGroupId(params)
+      result.users = await this.service.user.findByGroupId(
+        groupId,
+        status
+      )
     }
     this.success(result)
   }
