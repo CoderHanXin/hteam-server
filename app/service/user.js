@@ -103,6 +103,7 @@ class UserService extends Service {
   async findByGroupId(groupId, status = 1) {
     const group = await this.app.model.Group.findById(groupId)
     const users = await group.getUsers({
+      attributes: { exclude: ['username', 'password'] },
       where: { status }
     })
     const result = []
@@ -115,6 +116,7 @@ class UserService extends Service {
   async findByTeamId(teamId, status = 1) {
     const team = await this.app.model.Team.findById(teamId)
     const users = await team.getUsers({
+      attributes: { exclude: ['username', 'password'] },
       where: { status }
     })
     const result = []

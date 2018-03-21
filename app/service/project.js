@@ -67,7 +67,7 @@ class ProjectService extends Service {
       })
   }
 
-  async update(project, users) {
+  async updateWithMembers(project, users) {
     let userList
     if (users) {
       userList = await this.app.model.User.findAll({
@@ -92,6 +92,29 @@ class ProjectService extends Service {
         console.log(error)
         throw error
       })
+  }
+
+  async updateMembers(id, users) {
+    const Op = this.app.model.Op
+    const project = await this.app.model.Project.findById(id)
+    const userList = await this.app.model.User.findAll({
+      where: {
+        id: {
+          [Op.in]: users
+        }
+      }
+    })
+    const result = await project.setUsers(userList)
+    return result
+  }
+
+  async update(project) {
+    const result = await this.app.model.Project.update(project, {
+      where: {
+        id: project.id
+      }
+    })
+    return result
   }
 }
 

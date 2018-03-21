@@ -25,11 +25,17 @@ class ProjectController extends Controller {
   async update() {
     const id = this.ctx.params.id
     const { project, users } = this.ctx.request.body
-    project.id = id
-    const result = await this.service.project.update(
-      project,
-      users
-    )
+    let result
+    if (!project) {
+      result = await this.service.project.updateMembers(id, users)
+    } else {
+      project.id = id
+      if (users) {
+        result = await this.service.project.updateWithMembers(project, users)
+      } else {
+        result = await this.service.project.update(project)
+      }
+    }
     const success = this.checkResult('update', result)
     if (success) {
       this.success()
