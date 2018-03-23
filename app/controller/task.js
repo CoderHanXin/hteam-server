@@ -74,7 +74,8 @@ class TaskController extends Controller {
   async delete() {
     const id = this.ctx.params.id
     const result = await this.service.task.delete(id)
-    if (!result) {
+    const success = this.checkResult('delete', result)
+    if (success) {
       this.success()
     } else {
       this.error(ERROR.MSG_TASK_DELETE_ERROR)

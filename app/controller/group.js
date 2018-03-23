@@ -19,7 +19,8 @@ class GroupController extends Controller {
   async delete() {
     const id = this.ctx.params.id
     const result = await this.service.group.delete(id)
-    if (!result) {
+    const success = this.checkResult('delete', result)
+    if (success) {
       this.success()
     } else {
       this.error(ERROR.MSG_GROUP_DELETE_ERROR)

@@ -185,7 +185,8 @@ class UserController extends Controller {
   async delete() {
     const id = this.ctx.params.id
     const result = await this.service.user.delete(id)
-    if (!result) {
+    const success = this.checkResult('delete', result)
+    if (success) {
       this.success()
     } else {
       this.error(ERROR.MSG_USER_DELETE_ERROR)
