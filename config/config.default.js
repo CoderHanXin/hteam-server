@@ -44,5 +44,17 @@ module.exports = appInfo => {
     bucket: 'your_bucket'
   }
 
+  // 发送邮件配置
+  config.transporter = {
+    appName: 'HTeam',
+    host: 'smtp.qq.com',
+    secure: true,
+    port: 465,
+    auth: {
+      user: 'your_email_address',
+      pass: 'your_email_password'
+    }
+  }
+
   return config
 }
