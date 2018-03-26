@@ -6,13 +6,13 @@
 module.exports = app => {
   const { router, controller } = app
   router.get('/', controller.home.index)
-  router.get('/api/account/show', controller.user.showByToken)
   router.post('/api/account/register', controller.user.register)
   router.post('/api/account/login', controller.user.login)
   router.post('/api/account/wxlogin', controller.user.wxlogin)
   router.post('/api/account/wxbind', controller.user.wxbind)
-  router.put('/api/account/password', controller.user.changePassword)
 
+  router.get('/api/user/show', controller.user.showByToken)
+  router.put('/api/user/password', controller.user.changePassword)
   router.get('/api/user', controller.user.index)
   router.post('/api/user', controller.user.create)
   router.del('/api/user/:id', controller.user.delete)
