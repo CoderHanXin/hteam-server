@@ -10,7 +10,10 @@ module.exports = app => {
   router.post('/api/account/login', controller.user.login)
   router.post('/api/account/wxlogin', controller.user.wxlogin)
   router.post('/api/account/wxbind', controller.user.wxbind)
+  router.get('/api/account/join/check/:ticket', controller.user.joinCheck)
+  router.post('/api/account/join', controller.user.join)
 
+  router.post('/api/user/invite', controller.user.invite)
   router.get('/api/user/show', controller.user.showByToken)
   router.put('/api/user/password', controller.user.changePassword)
   router.get('/api/user', controller.user.index)

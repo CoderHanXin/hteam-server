@@ -11,35 +11,29 @@ class UserController extends Controller {
     const { teamId, groupId, status } = this.ctx.query
     const result = {}
     if (teamId) {
-      const users = await this.service.user.findByTeamId(
-        teamId,
-        status
-      )
+      const users = await this.service.user.findByTeamId(teamId, status)
       const groups = await this.service.group.findByTeamId(teamId)
       result.users = users
       result.groups = groups
     } else {
-      result.users = await this.service.user.findByGroupId(
-        groupId,
-        status
-      )
+      result.users = await this.service.user.findByGroupId(groupId, status)
     }
     this.success(result)
   }
 
   async register() {
-    const { username, password, name } = this.ctx.request.body
+    const { email, password, name } = this.ctx.request.body
     // 判断用户名是否已被使用
-    const result = await this.service.user.findByUsername(username)
+    const result = await this.service.user.findByEmail(email)
     if (result) {
-      this.error(ERROR.MSG_USER_CREATE_ERROR_USERNAME)
+      this.error(ERROR.MSG_USER_CREATE_ERROR_EMAIL)
       return
     }
     // md5 格式化密码
     const md5Pass = md5(password, this.config.md5Key)
     // 创建用户
     const user = await this.service.user.create({
-      username,
+      email,
       password: md5Pass,
       name
     })
@@ -68,13 +62,13 @@ class UserController extends Controller {
 
   /**
    * login
-   * @param {string} username 用户名
+   * @param {string} email    邮箱
    * @param {string} password 密码
    * @description return {code:0, message:'', {user, token}}
    */
   async login() {
-    const { username, password } = this.ctx.request.body
-    const user = await this.service.user.loginByUsername(username)
+    const { email, password } = this.ctx.request.body
+    const user = await this.service.user.loginByEmail(email)
 
     if (user) {
       if (user.password === md5(password, this.config.md5Key)) {
@@ -122,8 +116,8 @@ class UserController extends Controller {
   }
 
   async wxbind() {
-    const { username, password } = this.ctx.request.body
-    const user = await this.service.user.findByUsername(username)
+    const { email, password } = this.ctx.request.body
+    const user = await this.service.user.findByEmail(email)
 
     if (!user) {
       this.error(ERROR.MSG_USER_LOGIN_FAILED)
@@ -239,6 +233,76 @@ class UserController extends Controller {
     } else {
       this.error(ERROR.MSG_ERROR)
     }
+  }
+
+  async invite() {
+    const { userId, teamId, email } = this.ctx.request.body
+
+    const inviter = await this.service.user.findById(userId)
+    const team = await this.service.team.findById(teamId)
+    let invitee = await this.service.user.findByEmail(email)
+    if (invitee) {
+      console.log(invitee)
+    } else {
+      const user = {}
+      user.email = email
+      user.status = 0
+      invitee = await this.service.user.create(user)
+    }
+
+    const ticket = this.service.ticket.create(
+      'join',
+      {
+        userId: invitee.id,
+        teamId
+      },
+      3 * 24 * 60 * 60 * 1000
+    )
+
+    const result = await this.service.email.invite(ticket, email, inviter, team)
+    if (result && result.messageId) {
+      this.success()
+    } else {
+      this.error('发送邮件失败，请重试')
+    }
+  }
+
+  async joinCheck() {
+    const ticket = this.ctx.params.ticket
+    const decode = this.service.ticket.check(ticket, 'join')
+    if (!decode.success) {
+      this.error(decode.msg)
+      return
+    }
+    const { userId, teamId } = decode.data.payload
+    const user = await this.service.user.findById(userId)
+    const team = await this.service.team.findById(teamId)
+    delete user.password
+    this.success({ user, team })
+  }
+
+  async join() {
+    const { email, password, name, teamId } = this.ctx.request.body
+    const invitee = await this.service.user.findByEmail(email)
+    // 新用户需要输入名字、密码完成注册后加入;已注册用户需要验证密码后加入
+    if (invitee.status === 1) {
+      if (invitee.password !== md5(password, this.config.md5Key)) {
+        this.error(ERROR.MSG_USER_LOGIN_FAILED)
+        return
+      }
+      // 加入团队
+      await this.service.user.joinTeam(invitee.id, teamId)
+    } else {
+      const user = {
+        id: invitee.id,
+        password: md5(password, this.config.md5Key),
+        name,
+        status: 1
+      }
+      // 设置名字、密码并加入团队
+      await this.service.user.joinTeamAndUpdate(user, teamId)
+    }
+    this.success()
   }
 }
 

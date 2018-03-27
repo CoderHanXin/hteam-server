@@ -2,6 +2,9 @@
 
 module.exports = appInfo => {
   const config = (exports = {})
+  const clientRoot = 'http://localhost:9001'
+  // 前端地址
+  config.clientRoot = clientRoot
 
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + 'this_is_cookie_secret_key'
@@ -16,7 +19,7 @@ module.exports = appInfo => {
       ignore: '/api',
       ignoreJSON: false
     },
-    domainWhiteList: ['http://localhost:9001']
+    domainWhiteList: [clientRoot]
   }
 
   config.cors = {

@@ -7,8 +7,7 @@ module.exports = app => {
     'user',
     {
       username: {
-        type: STRING(20),
-        allowNull: false
+        type: STRING(20)
       },
       password: {
         type: STRING(32),

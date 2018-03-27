@@ -9,6 +9,14 @@ class UserService extends Service {
     return result && result.get({ plain: true })
   }
 
+  async loginByEmail(email) {
+    const result = await this.app.model.User.findOne({
+      include: [{ model: this.app.model.Team }],
+      where: { email }
+    })
+    return result && result.get({ plain: true })
+  }
+
   async findByIdIncludeTeam(id) {
     const result = await this.app.model.User.findOne({
       include: [{ model: this.app.model.Team }],
@@ -30,6 +38,13 @@ class UserService extends Service {
   async findByUsername(username) {
     const result = await this.app.model.User.findOne({
       where: { username }
+    })
+    return result
+  }
+
+  async findByEmail(email) {
+    const result = await this.app.model.User.findOne({
+      where: { email }
     })
     return result
   }
@@ -65,6 +80,45 @@ class UserService extends Service {
       })
       .then(result => {
         return plain
+      })
+      .catch(error => {
+        console.log(error)
+        throw error
+      })
+  }
+
+  async joinTeam(userId, teamId) {
+    const result = await this.app.model.TeamUser.create({
+      team_id: teamId,
+      user_id: userId,
+      role_id: ROLE.MEMBER,
+      role_name: ROLE.MEMBER_TITLE
+    })
+    return result
+  }
+
+  async joinTeamAndUpdate(user, teamId) {
+    return this.app.model
+      .transaction(t => {
+        return this.app.model.User.update(user, {
+          where: {
+            id: user.id
+          },
+          transaction: t
+        }).then(result => {
+          return this.app.model.TeamUser.create(
+            {
+              team_id: teamId,
+              user_id: user.id,
+              role_id: ROLE.MEMBER,
+              role_name: ROLE.MEMBER_TITLE
+            },
+            { transaction: t }
+          )
+        })
+      })
+      .then(result => {
+        return result
       })
       .catch(error => {
         console.log(error)
