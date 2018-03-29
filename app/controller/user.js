@@ -275,6 +275,11 @@ class UserController extends Controller {
       return
     }
     const { userId, teamId } = decode.data.payload
+    const result = await this.service.user.findByUserIdAndTeamId(userId, teamId)
+    if (result) {
+      this.error(ERROR.MSG_USER_JOIN_ERROR_JOINED)
+      return
+    }
     const user = await this.service.user.findById(userId)
     const team = await this.service.team.findById(teamId)
     delete user.password
@@ -282,7 +287,7 @@ class UserController extends Controller {
   }
 
   async join() {
-    const { email, password, name, teamId } = this.ctx.request.body
+    const { email, password, teamId, name } = this.ctx.request.body
     const invitee = await this.service.user.findByEmail(email)
     // 新用户需要输入名字、密码完成注册后加入;已注册用户需要验证密码后加入
     if (invitee.status === 1) {

@@ -13,6 +13,7 @@ module.exports = {
   MSG_USER_PASSWORD_ERROR_EMPTY: '密码不能为空',
   MSG_USER_PASSWORD_ERROR_VERIFY: '确认密码不一致',
   MSG_USER_PASSWORD_ERROR_WRONG: '密码错误',
+  MSG_USER_JOIN_ERROR_JOINED: '你之前已经加入该团队了，请直接登录',
 
   MSG_TEAM_CREATE_ERROR: '创建团队失败',
   MSG_TEAM_UPDATE_ERROR: '更新团队失败',

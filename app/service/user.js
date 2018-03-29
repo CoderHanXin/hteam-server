@@ -87,6 +87,16 @@ class UserService extends Service {
       })
   }
 
+  async findByUserIdAndTeamId(userId, teamId) {
+    const result = await this.app.model.TeamUser.findOne({
+      where: {
+        user_id: userId,
+        team_id: teamId
+      }
+    })
+    return result
+  }
+
   async joinTeam(userId, teamId) {
     const result = await this.app.model.TeamUser.create({
       team_id: teamId,
