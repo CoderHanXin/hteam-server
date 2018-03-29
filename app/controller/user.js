@@ -23,7 +23,7 @@ class UserController extends Controller {
 
   async register() {
     const { email, password, name } = this.ctx.request.body
-    // 判断用户名是否已被使用
+    // 判断邮箱是否已被使用
     const result = await this.service.user.findByEmail(email)
     if (result) {
       this.error(ERROR.MSG_USER_CREATE_ERROR_EMAIL)
@@ -161,10 +161,10 @@ class UserController extends Controller {
 
   async create() {
     const { user, teamId } = this.ctx.request.body
-    // 判断用户名是否已被使用
-    let result = await this.service.user.findByUsername(user.username)
+    // 判断邮箱是否已被使用
+    let result = await this.service.user.findByEmail(user.email)
     if (result) {
-      this.error(ERROR.MSG_USER_CREATE_ERROR_USERNAME)
+      this.error(ERROR.MSG_USER_CREATE_ERROR_EMAIL)
       return
     }
     // md5 格式化密码
