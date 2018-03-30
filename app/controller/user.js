@@ -246,9 +246,7 @@ class UserController extends Controller {
     const inviter = await this.service.user.findById(userId)
     const team = await this.service.team.findById(teamId)
     let invitee = await this.service.user.findByEmail(email)
-    if (invitee) {
-      console.log(invitee)
-    } else {
+    if (!invitee) {
       const user = {}
       user.email = email
       user.status = 0
