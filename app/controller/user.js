@@ -160,7 +160,7 @@ class UserController extends Controller {
   }
 
   async create() {
-    const { user, teamId } = this.ctx.request.body
+    const { user, teamId, role } = this.ctx.request.body
     // 判断邮箱是否已被使用
     let result = await this.service.user.findByEmail(user.email)
     if (result) {
@@ -170,7 +170,7 @@ class UserController extends Controller {
     // md5 格式化密码
     user.password = md5(user.password, this.config.md5Key)
     // 创建用户
-    result = await this.service.user.createTeamUser(user, teamId)
+    result = await this.service.user.createTeamUser(user, teamId, role)
     // 返回user前删除密码字段
     delete result.password
     this.success(result)
@@ -189,9 +189,14 @@ class UserController extends Controller {
 
   async update() {
     const id = this.ctx.params.id
-    const user = this.ctx.request.body
+    const { user, teamId, role } = this.ctx.request.body
     user.id = id
-    const result = await this.service.user.update(user)
+    let result
+    if (role) {
+      result = await this.service.user.updateWithRole(user, teamId, role)
+    } else {
+      result = await this.service.user.update(user)
+    }
     const success = this.checkResult('update', result)
     if (success) {
       this.success()

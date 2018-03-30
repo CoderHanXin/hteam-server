@@ -59,7 +59,7 @@ class UserService extends Service {
     return result
   }
 
-  async createTeamUser(user, teamId) {
+  async createTeamUser(user, teamId, role) {
     let plain
     return this.app.model
       .transaction(t => {
@@ -70,8 +70,8 @@ class UserService extends Service {
               {
                 team_id: teamId,
                 user_id: plain.id,
-                role_id: ROLE.MEMBER,
-                role_name: ROLE.MEMBER_TITLE
+                role_id: role.id,
+                role_name: role.name
               },
               { transaction: t }
             )
@@ -150,6 +150,39 @@ class UserService extends Service {
       }
     })
     return result
+  }
+
+  async updateWithRole(user, teamId, role) {
+    return this.app.model
+      .transaction(t => {
+        return this.app.model.User.update(user, {
+          where: {
+            id: user.id
+          },
+          transaction: t
+        }).then(result => {
+          return this.app.model.TeamUser.update(
+            {
+              role_id: role.id,
+              role_name: role.name
+            },
+            {
+              where: {
+                team_id: teamId,
+                user_id: user.id
+              },
+              transaction: t
+            }
+          )
+        })
+      })
+      .then(result => {
+        return result
+      })
+      .catch(error => {
+        console.log(error)
+        throw error
+      })
   }
 
   async updatePassword(id, password) {
